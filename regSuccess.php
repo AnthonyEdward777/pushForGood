@@ -5,7 +5,7 @@
             SEO();
         ?>
         <title>Success! - Push For Good</title>
-        <link rel="stylesheet" href="styleSheets/credentials.css">
+        <link rel="stylesheet" href="styleSheets/regsuccess.css">
     </head>
     <body>
         <center>
