@@ -10,9 +10,9 @@
     <body>
         <center>
             <div class="credentials-container">
-                <img height="30%" src = "images/logo.png" alt="Logo" class="logo">
+                <img height="10%" src = "images/favicon.png" alt="Logo" class="logo">
+                <h2>Sign Up</h2>
                 <form class="credentials-form" method="POST">
-                    <h2>Sign Up</h2>
                     <input type="text" name="name" placeholder="Full Name" required><br>
                     <input type="email" name="email" placeholder="Email" required><br>
                     <input type="password" name="password" placeholder="Password" required><br>

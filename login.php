@@ -30,12 +30,12 @@
             ?>
         <center>
             <div class="credentials-container">
-                <img height="30%" src = "images/logo.png" alt="Logo" class="logo">
+                <img height="10%" src = "images/favicon.png" alt="Logo" class="logo">
+                <h2>Log in</h2>
                 <form class="credentials-form" method="POST">
-                    <h2>Login</h2>
                     <input type="email" name="email" placeholder="Email" required><br>
                     <input type="password" name="password" placeholder="Password" required><br>
-                    <button type="submit">Login</button>
+                    <button type="submit">Log in</button>
                 </form>
             </div>
         </center>
