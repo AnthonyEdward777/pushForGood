@@ -10,7 +10,7 @@
     <body>
         <nav class="navbar">
             <div class="nav-left">
-                <img width="10%" src="images/favicon.png" alt="Push For Good Logo" class="logo-img">
+                <img width="10%" src="public/images/favicon.png" alt="Push For Good Logo" class="logo-img">
             </div>
 
             <ul class="nav-center">
@@ -28,7 +28,7 @@
         <center>
             <h1>Welcome to Push For Good!</h1>
             <video style="border-radius: 15px;" width="300" height="300" autoplay muted loop>
-                <source src="videos/regSuccess.mp4" type="video/mp4">
+                <source src="public/videos/regSuccess.mp4" type="video/mp4">
             </video> <br>
             <button class="signout-btn">Sign up</button>
         </center>
