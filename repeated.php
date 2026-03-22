@@ -1,9 +1,9 @@
 <?php
-function SEO()
+function seo()
 {
     echo "<meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <link rel='icon' type='image/x-icon' href='images/favicon.png'>
+    <link rel='icon' type='image/x-icon' href='public/images/favicon.png'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='preconnect' href='https://fonts.googleapis.com'>
     <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
