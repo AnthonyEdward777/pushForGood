@@ -18,40 +18,13 @@ body {
   width: auto;
 }
 
-.nav-center {
-  list-style: none;
-  display: flex;
-  gap: 30px;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-center li a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 14px;
-}
-
-.nav-center li a:hover {
-  color: #6a0dad;
-}
-
 .nav-right {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.profile-icon {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.signout-btn {
+.signin-btn {
   background-color: #ff6a4d;
   border: none;
   color: white;
@@ -59,7 +32,7 @@ body {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 1rem;
+  margin: 10%;
   text-decoration: none;
   transition: 1s;
   -webkit-transition: 1s;
@@ -68,8 +41,33 @@ body {
   -o-transition: 1s;
 }
 
-.signout-btn:hover {
+.signin-btn:hover {
   background-color: #7187fa;
+  transition: 1s;
+  -webkit-transition: 1s;
+  -moz-transition: 1s;
+  -ms-transition: 1s;
+  -o-transition: 1s;
+}
+
+.login-btn {
+  background-color: #ff6a4d;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 1s;
+  -webkit-transition: 1s;
+  -moz-transition: 1s;
+  -ms-transition: 1s;
+  -o-transition: 1s;
+}
+
+.login-btn:hover {
+  background-color: #000000;
   transition: 1s;
   -webkit-transition: 1s;
   -moz-transition: 1s;

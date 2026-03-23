@@ -14,7 +14,7 @@
 <body>
     <center>
     <main class="credentialsContainer">
-        <img src="../../public/images/favicon.png" alt="Logo" class="logo">
+        <img src="/pushforgood/public/images/favicon.png" alt="Logo" class="logo">
         <h2>Sign Up</h2>
 
         <?php if (!empty($errorMessage)): ?>
