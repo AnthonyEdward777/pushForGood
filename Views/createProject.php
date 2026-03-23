@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood-main/repeated.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/repeated.php';
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +21,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood-main/repeated.php';
     <h2>Create New Project</h2>
 
     
-    <form method="POST" action="/pushForGood-main/Controllers/NGO/projectController.php?action=create">
+    <form method="POST" action="/pushForGood/Controllers/NGO/projectController.php?action=create">
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" id="title" name="title" placeholder="Project Title" required>

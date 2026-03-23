@@ -6,8 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood-main/models/Project.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood-main/repeated.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/models/Project.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/repeated.php';
 
 $project = new Project();
 
@@ -38,7 +38,7 @@ if (!$data || $data['ngo_id'] != $_SESSION['user_id']) {
     <h2>Edit Project</h2>
 
     
-    <form method="POST" action="/pushForGood-main/Controllers/NGO/projectController.php?action=update">
+    <form method="POST" action="/pushForGood/Controllers/NGO/projectController.php?action=update">
         <input type="hidden" name="id" value="<?php echo $data['id']; ?>">
 
         <div class="form-group">

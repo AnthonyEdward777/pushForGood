@@ -7,8 +7,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood-main/models/Project.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood-main/repeated.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/models/Project.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/repeated.php';
 
 // Instantiate and fetch projects
 $project = new Project();
@@ -37,7 +37,7 @@ $projects = $project->getProjectsByNgo($_SESSION['user_id']);
 
                 <a href="editProject.php?id=<?php echo $row['id']; ?>" class="btn">Edit</a>
                 
-                <a href="/pushForGood-main/Controllers/NGO/projectController.php?action=delete&id=<?php echo $row['id']; ?>" 
+                <a href="/pushForGood/Controllers/NGO/projectController.php?action=delete&id=<?php echo $row['id']; ?>" 
                    class="btn btn-danger" 
                    onclick="return confirm('Are you sure you want to delete this project?')">Delete</a>
             </div>
