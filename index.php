@@ -15,24 +15,22 @@ $homeController = new HomeController();
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// 1. Get URL
+// Clean URL Handling
 $request = $_SERVER['REQUEST_URI'];
 
-// 2. Clean URL
 $basePath = '/pushforgood';
-// Pro-tip: str_ireplace handles case-insensitivity just in case someone types /pushForGood
 $path = str_ireplace($basePath, '', $request);
 
-// 3. Remove any trailing slashes or query strings
-// This strips the ?id=5 away so the switch statement can match '/projects/delete' cleanly
 $path = parse_url($path, PHP_URL_PATH);
 $path = rtrim($path, '/');
 
-// 4. The Modern Switch Router
+// Switch Router
 switch ($path) {
 
     // Home Route
     case '':
+        $homeController->index();
+        break;
     case '/':
         $homeController->index();
         break;
@@ -73,18 +71,18 @@ switch ($path) {
 
     case '/projects/edit':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $projectController->update(); // Removed ID parameter
+            $projectController->update();
         } else {
-            $projectController->showEdit(); // Removed ID parameter
+            $projectController->showEdit();
         }
         break;
 
     case '/projects/delete':
-        $projectController->delete(); // Removed ID parameter
+        $projectController->delete();
         break;
 
     case '/projects/view':
-        $projectController->view(); // Removed ID parameter
+        $projectController->view();
         break;
 
     // -- Admin Routes --
