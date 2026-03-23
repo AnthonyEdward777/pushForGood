@@ -61,6 +61,8 @@ CREATE TABLE IF NOT EXISTS applications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
     student_id INT NOT NULL, -- This links back to the users table
+    comment TEXT,
+    file_path VARCHAR(255),
     status ENUM('Pending', 'Accepted', 'Rejected') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -1,0 +1,64 @@
+.container {
+    max-width: 700px;
+    margin: 28px auto;
+    background: var(--pfg-surface);
+    border: 3px solid var(--pfg-border);
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+h2 {
+    margin-top: 0;
+    color: var(--pfg-text);
+    border-bottom: 2px solid var(--pfg-primary);
+    padding-bottom: 8px;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: var(--pfg-muted);
+}
+
+input,
+textarea {
+    width: 100%;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #fff;
+    font-family: 'Archivo Black', sans-serif;
+    cursor: pointer;
+    background: var(--pfg-primary);
+}
+
+.btn-cancel {
+    background: var(--pfg-accent);
+}

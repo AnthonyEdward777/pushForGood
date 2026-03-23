@@ -75,5 +75,83 @@ class Project
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function listAllProjects()
+    {
+        $query = "SELECT p.*, u.user_name AS ngo_name
+                  FROM projects p
+                  JOIN ngos n ON p.ngo_id = n.id
+                  JOIN users u ON n.user_id = u.id
+                  WHERE p.deleted_at IS NULL
+                  ORDER BY p.created_at DESC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProjectTypes()
+    {
+        $query = "SELECT c.id, c.name
+                  FROM categories c
+                  ORDER BY c.name ASC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function searchProjects($filters = [])
+    {
+        $query = "SELECT p.*, u.user_name AS ngo_name, c.name AS category_name
+                  FROM projects p
+                  JOIN ngos n ON p.ngo_id = n.id
+                  JOIN users u ON n.user_id = u.id
+                  LEFT JOIN categories c ON c.id = p.category_id
+                  WHERE p.deleted_at IS NULL";
+
+        $params = [];
+
+        $typeId = isset($filters['type']) ? (int) $filters['type'] : 0;
+        if ($typeId > 0) {
+            $query .= " AND p.category_id = :type_id";
+            $params[':type_id'] = $typeId;
+        }
+
+        $skill = trim($filters['skill'] ?? '');
+        if ($skill !== '') {
+            $query .= " AND p.skills LIKE :skill";
+            $params[':skill'] = '%' . $skill . '%';
+        }
+
+        $duration = strtolower(trim($filters['duration'] ?? ''));
+        if ($duration === 'short') {
+            $query .= " AND p.deadline IS NOT NULL AND DATEDIFF(p.deadline, CURDATE()) BETWEEN 0 AND 30";
+        } elseif ($duration === 'medium') {
+            $query .= " AND p.deadline IS NOT NULL AND DATEDIFF(p.deadline, CURDATE()) BETWEEN 31 AND 90";
+        } elseif ($duration === 'long') {
+            $query .= " AND p.deadline IS NOT NULL AND DATEDIFF(p.deadline, CURDATE()) > 90";
+        }
+
+        $query .= " ORDER BY p.created_at DESC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProjectById($project_id)
+    {
+        $query = "SELECT p.*, u.user_name AS ngo_name
+                  FROM projects p
+                  JOIN ngos n ON p.ngo_id = n.id
+                  JOIN users u ON n.user_id = u.id
+                  WHERE p.id = ? AND p.deleted_at IS NULL
+                  LIMIT 1";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$project_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
 ?>

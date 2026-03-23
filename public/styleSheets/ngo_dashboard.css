@@ -1,0 +1,49 @@
+.dashboard-container {
+    max-width: 980px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.project-list {
+    margin-top: 20px;
+}
+
+.project-card {
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: #fffdf3;
+}
+
+.project-card h3 {
+    margin-top: 0;
+    color: #1f1f1f;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.meta {
+    color: #5f5f5f;
+    font-size: 0.92rem;
+}
+
+.project-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}

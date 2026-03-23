@@ -1,0 +1,18 @@
+.credentialsContainer {
+    border-top: 5px solid #df3232;
+}
+
+h2 {
+    color: #df3232;
+}
+
+.restricted-label {
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.admin-submit {
+    background-color: #df3232;
+}

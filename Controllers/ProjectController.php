@@ -3,6 +3,8 @@
 
 // No session_start() here! It's already in index.php
 require_once __DIR__ . '/../Models/Project.php';
+require_once __DIR__ . '/../Models/Application.php';
+require_once __DIR__ . '/../Models/Review.php';
 
 class ProjectController
 {
@@ -77,7 +79,6 @@ class ProjectController
 
         // 2. Make sure the form isn't empty
         if (empty($_POST['title']) || empty($_POST['description']) || empty($_POST['deadline'])) {
-            // FIXED: We use the Query String format here so it doesn't 404
             $this->redirect('/pushforgood/projects/edit?id=' . $id);
             return;
         }
@@ -106,15 +107,54 @@ class ProjectController
             return;
         }
 
-        $project = $this->projectModel->getProjectsByUserId($id);
+        $role = strtolower($_SESSION['userRole'] ?? '');
+        $applicationModel = new Application($this->db);
+        $reviewModel = new Review($this->db);
+        $applications = [];
+        $alreadyApplied = false;
+        $projectReviews = [];
+        $canLeaveReview = false;
+        $alreadyReviewed = false;
+
+        if ($role === 'ngo') {
+            $project = $this->projectModel->getProjectByIdAndUser($id, $_SESSION['userId']);
+            if (!$project) {
+                $this->redirect('/dashboard?error=not_found');
+                return;
+            }
+
+            $applications = $applicationModel->getApplicationsByProjectForNgo((int) $id, (int) $_SESSION['userId']);
+        } else {
+            $project = $this->projectModel->getProjectById($id);
+            if ($role === 'student' && isset($_SESSION['userId'])) {
+                $alreadyApplied = $applicationModel->hasStudentApplied((int) $id, (int) $_SESSION['userId']);
+            }
+        }
 
         if (!$project) {
             $this->redirect('/dashboard?error=not_found');
             return;
         }
 
+        $projectReviews = $reviewModel->getReviewsByProject((int) $id);
+        if ($role === 'student' && isset($_SESSION['userId'])) {
+            $alreadyReviewed = $reviewModel->hasStudentReviewedProject((int) $id, (int) $_SESSION['userId']);
+            $canLeaveReview = $reviewModel->canStudentReviewProject((int) $id, (int) $_SESSION['userId']);
+        }
+
         // We pass the project data to the view
-        $this->render('projects/details', ['project' => $project]);
+        $this->render('projects/details', [
+            'project' => $project,
+            'applications' => $applications,
+            'alreadyApplied' => $alreadyApplied,
+            'projectReviews' => $projectReviews,
+            'canLeaveReview' => $canLeaveReview,
+            'alreadyReviewed' => $alreadyReviewed,
+            'flashSuccess' => $_SESSION['flash_success'] ?? null,
+            'flashError' => $_SESSION['flash_error'] ?? null,
+        ]);
+
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     }
 
     public function delete()
@@ -135,7 +175,13 @@ class ProjectController
 
     public function list()
     {
-        $projects = $this->projectModel->getAllProjects();
+        $projects = $this->projectModel->listAllProjects();
+        $this->render('projects/list', ['projects' => $projects]);
+    }
+
+    public function listAllProjects()
+    {
+        $projects = $this->projectModel->listAllProjects();
         $this->render('projects/list', ['projects' => $projects]);
     }
     

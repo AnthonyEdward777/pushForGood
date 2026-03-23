@@ -1,72 +1,147 @@
 <?php
-require_once '../database.php';
-require_once '../Models/Application.php';
+require_once __DIR__ . '/../Models/Application.php';
+require_once __DIR__ . '/../Models/Project.php';
 
 class ApplicationController
 {
     private $db;
     private $applicationModel;
+    private $projectModel;
 
     public function __construct($db)
     {
         $this->db = $db;
+        $this->applicationModel = new Application($db);
+        $this->projectModel = new Project($db);
     }
 
-    public function submitApplication()
+    public function apply()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (!isset($_SESSION['userId']) || strtolower($_SESSION['userRole'] ?? '') !== 'student') {
+            $this->redirect('/pushforgood/login');
+            return;
         }
 
-        if (!isset($_SESSION['role']) || strtolower($_SESSION['role']) !== 'student') {
-            die("Unauthorized access.");
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/pushforgood/dashboard');
+            return;
         }
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $projectId = $_POST['project_id'];
-            $studentId = $_SESSION['id']; 
-            $comment = trim($_POST['comment']);
-            $filePath = null;
+        $projectId = (int) ($_POST['project_id'] ?? 0);
+        $studentId = (int) $_SESSION['userId'];
+        $comment = trim($_POST['comment'] ?? '');
+        $filePath = null;
 
-            if (isset($_FILES['submission_file']) && $_FILES['submission_file']['error'] == 0) {
-                
-                $allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg'];
-                $maxSize = 5 * 1024 * 1024;
-
-                $fileType = $_FILES['submission_file']['type'];
-                $fileSize = $_FILES['submission_file']['size'];
-
-                if (!in_array($fileType, $allowedTypes)) {
-                    die("<script>alert('Error: File must be PDF or JPEG only.'); window.history.back();</script>");
-                }
-
-                if ($fileSize > $maxSize) {
-                    die("<script>alert('Error: File size must be less than 5MB.'); window.history.back();</script>");
-                }
-
-                $targetDir = __DIR__ . "/../public/uploads/";
-                
-                if (!is_dir($targetDir)) { 
-                    mkdir($targetDir, 0777, true); 
-                }
-
-                $fileName = time() . "_" . basename($_FILES["submission_file"]["name"]);
-                $targetFile = $targetDir . $fileName;
-
-                if (move_uploaded_file($_FILES["submission_file"]["tmp_name"], $targetFile)) {
-                    $filePath = "uploads/" . $fileName;
-                }
-            }
-
-            $success = $this->applicationModel->submit($projectId, $studentId, $comment, $filePath);
-
-            if ($success) {
-                header("Location: /pushforgood/public/dashboard.php?msg=ApplicationSubmitted");
-                exit();
-            } else {
-                $error = $this->applicationModel->getLastError();
-                echo "<script>alert('$error');</script>";
-            }
+        if ($projectId <= 0) {
+            $_SESSION['flash_error'] = 'Invalid project selected.';
+            $this->redirect('/pushforgood/dashboard');
+            return;
         }
+
+        $project = $this->projectModel->getProjectById($projectId);
+        if (!$project || strtolower($project['status'] ?? '') !== 'open') {
+            $_SESSION['flash_error'] = 'This project is not available for application.';
+            $this->redirect('/pushforgood/dashboard');
+            return;
+        }
+
+        if (!isset($_FILES['submission_file']) || $_FILES['submission_file']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['flash_error'] = 'CV file is required.';
+            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            return;
+        }
+
+        $allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg'];
+        $maxSize = 5 * 1024 * 1024;
+
+        $fileSize = (int) ($_FILES['submission_file']['size'] ?? 0);
+        $tmpFile = $_FILES['submission_file']['tmp_name'] ?? '';
+        $detectedType = $tmpFile !== '' && is_file($tmpFile) ? mime_content_type($tmpFile) : '';
+
+        if (!in_array($detectedType, $allowedTypes, true)) {
+            $_SESSION['flash_error'] = 'File must be PDF or JPEG only.';
+            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            return;
+        }
+
+        if ($fileSize > $maxSize) {
+            $_SESSION['flash_error'] = 'File size must be less than 5MB.';
+            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            return;
+        }
+
+        $targetDir = __DIR__ . '/../public/uploads/';
+        if (!is_dir($targetDir) && !mkdir($targetDir, 0777, true) && !is_dir($targetDir)) {
+            $_SESSION['flash_error'] = 'Upload directory is not available.';
+            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            return;
+        }
+
+        $originalName = basename($_FILES['submission_file']['name']);
+        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        $safeExtension = in_array($extension, ['pdf', 'jpg', 'jpeg'], true) ? $extension : 'pdf';
+        $fileName = uniqid('cv_', true) . '.' . $safeExtension;
+        $targetFile = $targetDir . $fileName;
+
+        if (!move_uploaded_file($tmpFile, $targetFile)) {
+            $_SESSION['flash_error'] = 'Could not upload CV file.';
+            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            return;
+        }
+
+        $filePath = 'uploads/' . $fileName;
+        $success = $this->applicationModel->submit($projectId, $studentId, $comment, $filePath);
+
+        if ($success) {
+            $_SESSION['flash_success'] = 'Application submitted successfully.';
+        } else {
+            $_SESSION['flash_error'] = $this->applicationModel->getLastError() ?: 'Could not submit your application.';
+        }
+
+        $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+    }
+
+    public function updateStatus()
+    {
+        if (!isset($_SESSION['userId']) || strtolower($_SESSION['userRole'] ?? '') !== 'ngo') {
+            $this->redirect('/pushforgood/login');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/pushforgood/dashboard');
+            return;
+        }
+
+        $applicationId = (int) ($_POST['application_id'] ?? 0);
+        $projectId = (int) ($_POST['project_id'] ?? 0);
+        $status = ucfirst(strtolower(trim($_POST['status'] ?? '')));
+
+        if ($applicationId <= 0 || $projectId <= 0 || !in_array($status, ['Accepted', 'Rejected'], true)) {
+            $_SESSION['flash_error'] = 'Invalid application status request.';
+            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            return;
+        }
+
+        $updated = $this->applicationModel->updateStatusForNgoProject(
+            $applicationId,
+            $projectId,
+            (int) $_SESSION['userId'],
+            $status
+        );
+
+        if ($updated) {
+            $_SESSION['flash_success'] = 'Application status updated to ' . $status . '.';
+        } else {
+            $_SESSION['flash_error'] = $this->applicationModel->getLastError() ?: 'Could not update application status.';
+        }
+
+        $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+    }
+
+    private function redirect($location)
+    {
+        header("Location: $location");
+        exit;
     }
 }

@@ -5,89 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard | PushForGood</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .admin-box {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-top: 6px solid #d9534f;
-            /* Admin Red */
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 20px;
-        }
-
-        .welcome-text h1 {
-            margin: 0;
-            color: #333;
-        }
-
-        .role-badge {
-            background: #d9534f;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .stat-card {
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .stat-card .number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #d9534f;
-        }
-
-        .btn-logout {
-            background: #333;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="/pushforgood/public/stylesheets/app_theme.css">
+    <link rel="stylesheet" href="/pushforgood/public/stylesheets/student_dashboard.css">
 </head>
 
 <body>
 
-    <div class="admin-box">
+    <div class="dashboard-box">
         <div class="header">
             <div class="welcome-text">
                 <h1>Welcome, <?= htmlspecialchars($name) ?></h1>
@@ -96,31 +20,135 @@
             <a href="/pushforgood/logout" class="btn-logout">Logout</a>
         </div>
 
-        <p style="color: #666; margin-top: 20px;">
-            This is the Master Administrative Interface. You have full oversight of all Students and NGOs.
-        </p>
+        <?php if (!empty($flashSuccess)): ?>
+            <div class="flash flash-success"><?= htmlspecialchars($flashSuccess) ?></div>
+        <?php endif; ?>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Users</h3>
-                <div class="number">1,240</div>
-            </div>
-            <div class="stat-card">
-                <h3>Active NGOs</h3>
-                <div class="number">42</div>
-            </div>
-            <div class="stat-card">
-                <h3>Pending Approvals</h3>
-                <div class="number">7</div>
-            </div>
+        <?php if (!empty($flashError)): ?>
+            <div class="flash flash-error"><?= htmlspecialchars($flashError) ?></div>
+        <?php endif; ?>
+
+        <h2 class="section-heading">Available Projects</h2>
+        <p class="section-subtitle">Browse open volunteer opportunities and apply directly.</p>
+
+        <div class="filters-box">
+            <form class="filters-form" method="GET" action="/pushforgood/dashboard" data-enhanced-validation="true">
+                <div>
+                    <label for="type">Project Type</label>
+                    <select id="type" name="type">
+                        <option value="">All Types</option>
+                        <?php foreach (($projectTypes ?? []) as $type): ?>
+                            <option value="<?= (int) $type['id'] ?>" <?= ((string) ($projectFilters['type'] ?? '') === (string) $type['id']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($type['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="duration">Duration</label>
+                    <select id="duration" name="duration">
+                        <option value="">Any Duration</option>
+                        <option value="short" <?= (($projectFilters['duration'] ?? '') === 'short') ? 'selected' : '' ?>>Short (0-30 days)</option>
+                        <option value="medium" <?= (($projectFilters['duration'] ?? '') === 'medium') ? 'selected' : '' ?>>Medium (31-90 days)</option>
+                        <option value="long" <?= (($projectFilters['duration'] ?? '') === 'long') ? 'selected' : '' ?>>Long (90+ days)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="skill">Skill Required</label>
+                    <input id="skill" type="text" name="skill" maxlength="100" value="<?= htmlspecialchars($projectFilters['skill'] ?? '') ?>" placeholder="e.g. PHP, Design, Data Entry" title="Max 100 characters." data-error-maxlength="Skill keyword must be 100 characters or fewer.">
+                    <small class="field-hint">Tip: try one keyword at a time for better results.</small>
+                </div>
+
+                <div class="filters-actions">
+                    <button type="submit" class="btn btn-filter">Search</button>
+                    <a href="/pushforgood/dashboard" class="btn btn-clear">Reset</a>
+                </div>
+            </form>
         </div>
 
-        <div style="margin-top: 40px; padding: 20px; border: 1px dashed #ccc; border-radius: 8px; background: #fffcfc;">
-            <h2 style="color: #d9534f; margin-top: 0;">System Logs</h2>
-            <p>Auth Flow: <strong>STABLE</strong></p>
-            <p>Database: <strong>CONNECTED</strong></p>
+        <div class="project-grid">
+            <?php if (!empty($projects)): ?>
+                <?php foreach ($projects as $project): ?>
+                    <?php $alreadyApplied = in_array((int) $project['id'], $appliedProjectIds ?? [], true); ?>
+                    <div class="project-card">
+                        <h3><?= htmlspecialchars($project['title']) ?></h3>
+                        <div class="project-meta">
+                            NGO: <?= htmlspecialchars($project['ngo_name'] ?? 'Unknown NGO') ?> |
+                            Type: <?= htmlspecialchars($project['category_name'] ?? 'Uncategorized') ?> |
+                            Deadline: <?= htmlspecialchars($project['deadline'] ?? 'N/A') ?> |
+                            Status: <?= htmlspecialchars($project['status'] ?? 'N/A') ?>
+                        </div>
+                        <div class="project-description">
+                            <?= nl2br(htmlspecialchars($project['description'] ?? '')) ?>
+                        </div>
+                        <div class="project-actions">
+                            <a href="/pushforgood/projects/view?id=<?= (int) $project['id'] ?>" class="btn btn-view">View Details</a>
+
+                            <?php if (strtolower($project['status'] ?? '') !== 'open'): ?>
+                                <button type="button" class="btn btn-applied" disabled>Closed</button>
+                            <?php elseif ($alreadyApplied): ?>
+                                <button type="button" class="btn btn-applied" disabled>Applied</button>
+                            <?php else: ?>
+                                <a href="/pushforgood/projects/view?id=<?= (int) $project['id'] ?>" class="btn btn-apply">Apply</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="project-card">
+                    <p class="zero-margin">No projects available right now. Please check back later.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="applications-section">
+            <h2 class="section-title">My Applications</h2>
+            <p class="muted">Track your submissions and current application status.</p>
+
+            <?php if (!empty($studentApplications)): ?>
+                <table class="applications-table">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>NGO</th>
+                            <th>Applied On</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($studentApplications as $application): ?>
+                            <?php $status = strtolower($application['status'] ?? 'pending'); ?>
+                            <tr>
+                                <td>
+                                    <strong><?= htmlspecialchars($application['project_title'] ?? 'Untitled Project') ?></strong><br>
+                                    <span class="muted">Deadline: <?= htmlspecialchars($application['project_deadline'] ?? 'N/A') ?></span>
+                                </td>
+                                <td><?= htmlspecialchars($application['ngo_name'] ?? 'Unknown NGO') ?></td>
+                                <td><?= !empty($application['applied_at']) ? date('M d, Y', strtotime($application['applied_at'])) : 'N/A' ?></td>
+                                <td>
+                                    <span class="status-badge status-<?= htmlspecialchars($status) ?>">
+                                        <?= htmlspecialchars($application['status'] ?? 'Pending') ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/pushforgood/projects/view?id=<?= (int) $application['project_id'] ?>" class="btn btn-view">Open</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="project-card">
+                    <p class="zero-margin">You have not applied to any projects yet.</p>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
+
+    <script src="/pushforgood/public/scripts/form_validation.js"></script>
 
 </body>
 

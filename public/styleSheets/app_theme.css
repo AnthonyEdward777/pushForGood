@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Josefin+Sans:wght@100..700&family=Poppins:wght@100..900&display=swap');
+
+:root {
+    --pfg-bg: #7187fa;
+    --pfg-surface: cornsilk;
+    --pfg-surface-soft: #fffdf3;
+    --pfg-primary: #df3232;
+    --pfg-primary-alt: #ff6a4d;
+    --pfg-accent: #2f3d87;
+    --pfg-text: #1f1f1f;
+    --pfg-muted: #5f5f5f;
+    --pfg-border: #1f1f1f;
+    --pfg-success-bg: #e9f7ef;
+    --pfg-success-text: #1f6f45;
+    --pfg-error-bg: #fdecea;
+    --pfg-error-text: #8a1f17;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: var(--pfg-bg);
+    color: var(--pfg-text);
+}
+
+.page-shell {
+    max-width: 1150px;
+    margin: 24px auto;
+    background: var(--pfg-surface);
+    border: 3px solid var(--pfg-border);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    padding: 32px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+    padding-bottom: 16px;
+}
+
+.page-title {
+    margin: 0;
+    font-family: "Archivo Black", sans-serif;
+    letter-spacing: 0.2px;
+}
+
+.badge {
+    display: inline-block;
+    background: var(--pfg-primary);
+    color: #fff;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.btn {
+    display: inline-block;
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-family: "Archivo Black", sans-serif;
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.btn-primary {
+    background: var(--pfg-primary);
+}
+
+.btn-secondary {
+    background: var(--pfg-accent);
+}
+
+.btn-muted {
+    background: #8f8f8f;
+}
+
+.btn-danger {
+    background: var(--pfg-primary-alt);
+}
+
+.card {
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    background: var(--pfg-surface-soft);
+    padding: 16px;
+}
+
+.section-title {
+    margin: 0;
+    font-family: "Archivo Black", sans-serif;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--pfg-muted);
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 10px;
+    font-family: "Josefin Sans", sans-serif;
+    background: #fff;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 6px;
+    color: var(--pfg-muted);
+    font-size: 0.82rem;
+}
+
+.input-invalid {
+    border-color: var(--pfg-primary-alt) !important;
+    box-shadow: 0 0 0 2px rgba(255, 106, 77, 0.18);
+}
+
+.flash {
+    margin: 16px 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.flash-success {
+    background: var(--pfg-success-bg);
+    color: var(--pfg-success-text);
+}
+
+.flash-error {
+    background: var(--pfg-error-bg);
+    color: var(--pfg-error-text);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: left;
+    vertical-align: top;
+}
+
+.table th {
+    background: #f9f0d1;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 0.86rem;
+}
+
+.muted {
+    color: var(--pfg-muted);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .page-shell {
+        margin: 12px;
+        padding: 18px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

@@ -143,11 +143,36 @@ class AuthController
         switch ($role) {
             case 'student':
             case 'user':
-                // Future-proofing: Your team can add ApplicationModel fetches here later
+                require_once __DIR__ . '/../Models/Project.php';
+                require_once __DIR__ . '/../Models/Application.php';
+
+                $projectModel = new Project($this->db);
+                $applicationModel = new Application($this->db);
+
+                $projectFilters = [
+                    'type' => trim($_GET['type'] ?? ''),
+                    'duration' => trim($_GET['duration'] ?? ''),
+                    'skill' => trim($_GET['skill'] ?? ''),
+                ];
+
+                $projects = $projectModel->searchProjects($projectFilters);
+                $projectTypes = $projectModel->getProjectTypes();
+                $appliedProjectIds = $applicationModel->getAppliedProjectIdsByStudent((int) $userId);
+                $studentApplications = $applicationModel->getApplicationsByStudent((int) $userId);
+
                 $this->render('dashboards/student_dashboard', [
                     'name' => $name,
-                    'role' => $role
+                    'role' => $role,
+                    'projects' => $projects,
+                    'projectFilters' => $projectFilters,
+                    'projectTypes' => $projectTypes,
+                    'appliedProjectIds' => $appliedProjectIds,
+                    'studentApplications' => $studentApplications,
+                    'flashSuccess' => $_SESSION['flash_success'] ?? null,
+                    'flashError' => $_SESSION['flash_error'] ?? null,
                 ]);
+
+                unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 break;
 
             case 'ngo':
@@ -165,10 +190,20 @@ class AuthController
                 break;
 
             case 'admin':
+                require_once __DIR__ . '/../Models/Admin.php';
+                $adminModel = new Admin($this->db);
+
                 $this->render('dashboards/admin_dashboard', [
                     'name' => $name,
-                    'role' => $role
+                    'role' => $role,
+                    'users' => $adminModel->getManageableUsers(),
+                    'applications' => $adminModel->getAllApplications(),
+                    'reviews' => $adminModel->getAllReviews(),
+                    'flashSuccess' => $_SESSION['flash_success'] ?? null,
+                    'flashError' => $_SESSION['flash_error'] ?? null,
                 ]);
+
+                unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 break;
 
             default:
