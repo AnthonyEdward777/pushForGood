@@ -106,7 +106,7 @@ class ProjectController
             return;
         }
 
-        $project = $this->projectModel->getProjectById($id);
+        $project = $this->projectModel->getProjectsByUserId($id);
 
         if (!$project) {
             $this->redirect('/dashboard?error=not_found');
