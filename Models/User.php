@@ -1,8 +1,10 @@
 <?php
-class User
+// Models/User.php
+
+abstract class User
 {
-    private $conn;
-    private $lastError = '';
+    protected $conn;
+    protected $lastError = '';
 
     public function __construct($db)
     {
@@ -14,103 +16,40 @@ class User
         return $this->lastError;
     }
 
-    public function findRoleIdForEntity($entity)
+    // Abstract method: Forces children to implement their own registration flow
+    abstract public function register($data);
+
+    // Shared Login Logic
+    public static function login($db, $email, $password)
     {
-        $entity = strtolower(trim($entity));
-
-        if ($entity === 'user') {
-            $query = "SELECT id FROM roles WHERE LOWER(role_name) IN ('student', 'user') ORDER BY CASE WHEN LOWER(role_name) = 'student' THEN 0 ELSE 1 END LIMIT 1";
-            $stmt = $this->conn->query($query);
-        } else {
-            $stmt = $this->conn->prepare('SELECT id FROM roles WHERE LOWER(role_name) = :role LIMIT 1');
-            $stmt->execute([':role' => $entity]);
-        }
-
-        $roleData = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $roleData ? (int) $roleData['id'] : null;
-    }
-
-    public function register($name, $email, $password, $entity, $licenseNumber = null)
-    {
-        $this->lastError = '';
-        $roleId = $this->findRoleIdForEntity($entity);
-        if ($roleId === null) {
-            $this->lastError = 'Selected role was not found in database.';
-            return false;
-        }
-
-        $this->conn->beginTransaction();
-
-        try {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-            $insertUser = $this->conn->prepare(
-                'INSERT INTO users (role_id, name, email, password)
-                 VALUES (:roleId, :name, :email, :password)'
-            );
-            $insertUser->execute([
-                ':roleId' => $roleId,
-                ':name' => $name,
-                ':email' => $email,
-                ':password' => $hashedPassword,
-            ]);
-
-            $newUserId = (int) $this->conn->lastInsertId();
-
-            if (strtolower($entity) === 'ngo') {
-                if (empty($licenseNumber)) {
-                    throw new RuntimeException('License number required for NGO registration.');
-                }
-
-                $insertNgo = $this->conn->prepare(
-                    'INSERT INTO ngo_profiles (user_id, license_number, mission_statement)
-                     VALUES (:userId, :licenseNumber, :missionStatement)'
-                );
-                $insertNgo->execute([
-                    ':userId' => $newUserId,
-                    ':licenseNumber' => $licenseNumber,
-                    ':missionStatement' => null,
-                ]);
-            }
-
-            $this->conn->commit();
-            return true;
-        } catch (Throwable $exception) {
-            if ($this->conn->inTransaction()) {
-                $this->conn->rollBack();
-            }
-
-            if ($exception instanceof PDOException && (string) $exception->getCode() === '23000') {
-                $this->lastError = 'That email is already registered.';
-            } else {
-                $this->lastError = $exception->getMessage() ?: 'Registration failed. Please try again.';
-            }
-
-            return false;
-        }
-    }
-
-    public function login($email, $password)
-    {
-        $stmt = $this->conn->prepare(
-            'SELECT u.id, u.name, u.password, r.role_name
-             FROM users u
-             INNER JOIN roles r ON r.id = u.role_id
-             WHERE u.email = :email
-             LIMIT 1'
+        $stmt = $db->prepare(
+            'SELECT u.id, u.user_name, u.user_password, t.type_name as role_name
+            FROM users u
+            INNER JOIN user_types t ON t.id = u.user_type_id
+            WHERE u.email_address = :email_address AND u.deleted_at IS NULL
+            LIMIT 1'
         );
-        $stmt->execute([':email' => $email]);
+        $stmt->execute([':email_address' => $email]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row && password_verify($password, $row['password'])) {
+        if ($row && password_verify($password, $row['user_password'])) {
             return [
                 'id' => (int) $row['id'],
-                'name' => $row['name'],
+                'name' => $row['user_name'],
                 'role' => $row['role_name'],
             ];
         }
 
         return false;
+    }
+
+    // Helper function used by children during registration
+    protected function getRoleId($entityName)
+    {
+        $stmt = $this->conn->prepare('SELECT id FROM user_types WHERE LOWER(type_name) = :role LIMIT 1');
+        $stmt->execute([':role' => strtolower($entityName)]);
+        $roleData = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $roleData ? (int) $roleData['id'] : null;
     }
 }

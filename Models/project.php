@@ -1,51 +1,49 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/config/database.php';
+class Project
+{
+    private $db;
 
-class Project {
-    private $conn;
-    private $table = "projects";
-
-    public function __construct() {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+    public function __construct($db)
+    {
+        $this->db = $db;
     }
 
     public function createProject($ngo_id, $title, $description, $skills, $location, $deadline) {
-        $query = "INSERT INTO " . $this->table . " 
+        $query = "INSERT INTO projects 
         (ngo_id, category_id, title, description, skills, location, deadline, status) 
         VALUES (?, 1, ?, ?, ?, ?, ?, 'Open')";
 
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->db->prepare($query);
         return $stmt->execute([$ngo_id, $title, $description, $skills, $location, $deadline]);
     }
 
     public function getProjectsByNgo($ngo_id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE ngo_id = ? ORDER BY created_at DESC";
-        $stmt = $this->conn->prepare($query);
+        $query = "SELECT * FROM projects WHERE ngo_id = ? AND deleted_at IS NULL ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($query);
         $stmt->execute([$ngo_id]);
         return $stmt;
     }
 
     public function getProjectById($id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE id = ?";
-        $stmt = $this->conn->prepare($query);
+        $query = "SELECT * FROM projects WHERE id = ? AND deleted_at IS NULL";
+        $stmt = $this->db->prepare($query);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function updateProject($id, $title, $description, $skills, $location, $deadline) {
-        $query = "UPDATE " . $this->table . " 
+        $query = "UPDATE projects 
         SET title=?, description=?, skills=?, location=?, deadline=? 
-        WHERE id=?";
+        WHERE id=? AND deleted_at IS NULL";
 
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->db->prepare($query);
         return $stmt->execute([$title, $description, $skills, $location, $deadline, $id]);
     }
 
     public function deleteProject($id) {
-        $query = "DELETE FROM " . $this->table . " WHERE id=?";
-        $stmt = $this->conn->prepare($query);
+        $query = "UPDATE projects SET deleted_at = CURRENT_TIMESTAMP WHERE id=? AND deleted_at IS NULL";
+        $stmt = $this->db->prepare($query);
         return $stmt->execute([$id]);
     }
 }

@@ -1,21 +1,25 @@
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <?php
-            include __DIR__ . '/../repeated.php';
-            seo();
-        ?>
-        <title>Push For Good</title>
-        <link rel="stylesheet" href="public/styleSheets/credentials.css">
-    </head>
-    <body>
-        <center>
-            <div class="credentialsContainer">
-                <img height="10%" src="public/images/favicon.png" alt="Logo" class="logo">
-                <h2>Push For Good</h2>
-                <p class="formMessage">Choose an action to continue.</p>
-                <p class="formLinks"><a href="index.php?page=login">Login</a></p>
-                <p class="formLinks"><a href="index.php?page=signup">Sign up</a></p>
-            </div>
-        </center>
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PushForGood - Make a Difference</title>
+
+</head>
+
+<body>
+
+    <main class="container">
+        <h1>Welcome to PushForGood</h1>
+        <p>Connecting passionate students with NGOs to create real-world impact. Join our community today to find volunteer opportunities or recruit talented individuals for your cause.</p>
+
+        <div class="btn-group">
+            <a href="/pushforgood/login" class="btn-login">Log In</a>
+            <a href="/pushforgood/register" class="btn-signup">Sign Up</a>
+        </div>
+    </main>
+
+</body>
+
 </html>
