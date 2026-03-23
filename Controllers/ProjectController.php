@@ -101,12 +101,16 @@ class ProjectController
     {
         $id = $_GET['id'] ?? null;
 
-        if (!$id) $this->redirect('/dashboard');
+        if (!$id) {
+            $this->redirect('/dashboard');
+            return;
+        }
 
-        $project = $this->projectModel->getProjectsByUserId($id);
+        $project = $this->projectModel->getProjectById($id);
 
         if (!$project) {
             $this->redirect('/dashboard?error=not_found');
+            return;
         }
 
         // We pass the project data to the view
@@ -128,7 +132,7 @@ class ProjectController
         $this->projectModel->deleteProject($id, $_SESSION['userId']);
         $this->redirect('/pushforgood/dashboard');
     }
-
+    
     private function redirect($url)
     {
         header("Location: /pushforgood" . $url);
