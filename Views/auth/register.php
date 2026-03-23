@@ -12,9 +12,9 @@
 </head>
 
 <body>
-
+    <center>
     <main class="credentialsContainer">
-        <img height="10%" src="/pushforgood/public/images/favicon.png" alt="Logo" class="logo">
+        <img src="../../public/images/favicon.png" alt="Logo" class="logo">
         <h2>Sign Up</h2>
 
         <?php if (!empty($errorMessage)): ?>
@@ -40,7 +40,7 @@
 
         <p class="formLinks">Already have an account? <a href="/pushforgood/login">Log in</a></p>
     </main>
-
+    </center>
     <script>
         // This JavaScript is perfect. It handles the dynamic form display exactly as it should.
         const entitySelect = document.getElementById('entity');

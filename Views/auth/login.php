@@ -12,7 +12,7 @@
 <body>
     <center>
         <div class="credentialsContainer">
-            <img height="10%" src="public/images/favicon.png" alt="Logo" class="logo">
+            <img src="../../public/images/favicon.png" alt="Logo" class="logo">
             <h2>Log in</h2>
 
             <?php if (!empty($errorMessage)): ?>
