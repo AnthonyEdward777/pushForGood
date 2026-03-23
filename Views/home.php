@@ -12,16 +12,8 @@
             <div class="nav-left">
                 <img width="10%" src="public/images/favicon.png" alt="Push For Good Logo" class="logo-img">
             </div>
-
-            <ul class="nav-center">
-                <li><a href="#">Explore Projects</a></li>
-                <li><a href="#">My Dashboard</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">About</a></li>
-            </ul>
-
             <div class="nav-right">
-                <a class="signout-btn" href="login.php">Log in</a>
+                <a class="login-btn" href="Views/auth/login.php">Log in</a>
             </div>
         </nav>
 
@@ -30,5 +22,5 @@
             <video style="border-radius: 15px;" width="300" height="300" autoplay muted loop>
                 <source src="public/videos/regSuccess.mp4" type="video/mp4">
             </video> <br>
-            <button class="signout-btn">Sign up</button>
+            <a class="signin-btn" href="Views/auth/register.php">Sign up</a>
         </center>
