@@ -106,17 +106,28 @@
             <a href="/pushforgood/projects/create" class="btn-primary">+ Post New Opportunity</a>
         </div>
 
-        <div class="project-card">
-            <h3>Network Security Audit</h3>
-            <div class="stats">
-                <a href="/pushforgood/projects/edit?id=<?= $project['id'] ?>" style="color: #3498db; margin-right: 15px;">Edit Project</a>
+        <div class="project-list" style="margin-top: 20px;">
+            <?php if (!empty($projects)): ?>
+                <?php foreach ($projects as $project): ?>
+                    <div class="project-card" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff;">
 
-                <a href="/pushforgood/projects/delete?id=<?= $project['id'] ?>"
-                    style="color: #e74c3c;"
-                    onclick="return confirm('Are you sure you want to delete this project?');">
-                    Delete
-                </a>
-            </div>
+                        <h3 style="margin-top: 0; color: #2c3e50;"><?= htmlspecialchars($project['title']) ?></h3>
+
+                        <p style="color: #666; font-size: 0.9em;">
+                            <strong>Deadline:</strong> <?= htmlspecialchars($project['deadline']) ?> |
+                            <strong>Status:</strong> <?= htmlspecialchars($project['status']) ?>
+                        </p>
+
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <a href="/pushforgood/projects/view/<?= $project['id'] ?>" style="background: #2ecc71; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px;">View</a>
+                            <a href="/pushforgood/projects/edit/<?= $project['id'] ?>" style="background: #3498db; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px;">Edit</a>
+                            <a href="/pushforgood/projects/delete/<?= $project['id'] ?>" style="background: #e74c3c; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px;">Delete</a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>You haven't posted any projects yet.</p>
+            <?php endif; ?>
         </div>
 
         <p>Manage your volunteer postings and review student applicants here.</p>

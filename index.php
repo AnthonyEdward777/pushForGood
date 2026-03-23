@@ -72,14 +72,14 @@ switch ($path) {
 
     case '/projects/edit':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $projectController->update();
+            $projectController->update($resourceId); // Added $resourceId
         } else {
-            $projectController->showEdit();
+            $projectController->showEdit($resourceId); // Added $resourceId
         }
         break;
 
     case '/projects/delete':
-        $projectController->delete();
+        $projectController->delete($resourceId); // Added $resourceId
         break;
 
     case '/projects/view':

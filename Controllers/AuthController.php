@@ -135,14 +135,15 @@ class AuthController
         }
 
         // 2. Grab their details from the session
-        // We use strtolower so 'Student', 'STUDENT', and 'student' all match perfectly
         $role = strtolower($_SESSION['userRole'] ?? '');
         $name = $_SESSION['userName'] ?? 'Member';
+        $userId = $_SESSION['userId']; // <-- Extract userId to use in our database query
 
         // 3. Traffic Cop: Route them to their specific interface
         switch ($role) {
             case 'student':
-            case 'user': // Kept as a fallback just in case old test data has 'user'
+            case 'user':
+                // Future-proofing: Your team can add ApplicationModel fetches here later
                 $this->render('dashboards/student_dashboard', [
                     'name' => $name,
                     'role' => $role
@@ -150,9 +151,16 @@ class AuthController
                 break;
 
             case 'ngo':
+                // --- ADDED: Fetch NGO Projects ---
+                require_once __DIR__ . '/../Models/Project.php';
+                $projectModel = new Project($this->db);
+                $projects = $projectModel->getProjectsByUserId($userId);
+                // ---------------------------------
+
                 $this->render('dashboards/ngo_dashboard', [
                     'name' => $name,
-                    'role' => $role
+                    'role' => $role,
+                    'projects' => $projects // <-- Pass the fetched projects to the view!
                 ]);
                 break;
 
