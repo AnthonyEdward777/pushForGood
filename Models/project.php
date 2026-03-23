@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood-main/config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/config/database.php';
 
 class Project {
     private $conn;

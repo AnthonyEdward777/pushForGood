@@ -8,6 +8,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/models/Project.php';
+=======
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/models/project.php';
+>>>>>>> a5ee4160f121f39ef1b7a1493597feea11bdbe3d
 require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/repeated.php';
 
 // Instantiate and fetch projects
