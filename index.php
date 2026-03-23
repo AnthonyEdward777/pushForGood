@@ -12,6 +12,7 @@ $db = $database->getConnection();
 $authController = new AuthController($db);
 $projectController = new ProjectController($db);
 $homeController = new HomeController();
+$applicationController = new ApplicationController($db);
 
 $method = $_SERVER['REQUEST_METHOD'];
 

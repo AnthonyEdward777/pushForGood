@@ -132,6 +132,12 @@ class ProjectController
         $this->projectModel->deleteProject($id, $_SESSION['userId']);
         $this->redirect('/pushforgood/dashboard');
     }
+
+    public function list()
+    {
+        $projects = $this->projectModel->getAllProjects();
+        $this->render('projects/list', ['projects' => $projects]);
+    }
     
     private function redirect($url)
     {

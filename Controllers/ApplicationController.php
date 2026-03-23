@@ -7,11 +7,9 @@ class ApplicationController
     private $db;
     private $applicationModel;
 
-    public function __construct()
+    public function __construct($db)
     {
-        $database = new Database();
-        $this->db = $database->getConnection();
-        $this->applicationModel = new Application($this->db);
+        $this->db = $db;
     }
 
     public function submitApplication()
