@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/models/Project.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/models/project.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/repeated.php';
 
 // Instantiate and fetch projects

@@ -2,7 +2,7 @@
 session_start();
 
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/Models/Project.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/pushForGood/Models/project.php';
 
 class ProjectController {
     private $project;
