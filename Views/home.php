@@ -1,25 +1,34 @@
-<!DOCTYPE html>
 <html lang="en">
+    <head>
+        <?php
+            include 'repeated.php';
+            SEO();
+        ?>
+        <title>Welcome - Push For Good</title>
+        <link rel="stylesheet" href="public/styleSheets/welcome.css">
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img width="10%" src="public/images/favicon.png" alt="Push For Good Logo" class="logo-img">
+            </div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PushForGood - Make a Difference</title>
+            <ul class="nav-center">
+                <li><a href="#">Explore Projects</a></li>
+                <li><a href="#">My Dashboard</a></li>
+                <li><a href="#">How It Works</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
 
-</head>
+            <div class="nav-right">
+                <a class="signout-btn" href="login.php">Log in</a>
+            </div>
+        </nav>
 
-<body>
-
-    <main class="container">
-        <h1>Welcome to PushForGood</h1>
-        <p>Connecting passionate students with NGOs to create real-world impact. Join our community today to find volunteer opportunities or recruit talented individuals for your cause.</p>
-
-        <div class="btn-group">
-            <a href="/pushforgood/login" class="btn-login">Log In</a>
-            <a href="/pushforgood/register" class="btn-signup">Sign Up</a>
-        </div>
-    </main>
-
-</body>
-
-</html>
+        <center>
+            <h1>Welcome to Push For Good!</h1>
+            <video style="border-radius: 15px;" width="300" height="300" autoplay muted loop>
+                <source src="public/videos/regSuccess.mp4" type="video/mp4">
+            </video> <br>
+            <button class="signout-btn">Sign up</button>
+        </center>
