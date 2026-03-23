@@ -1,12 +1,11 @@
 <?php
-ini_set('display_errors', '0');
+ini_set('display_errors', '1');
 error_reporting(E_ALL);
 session_start();
 require_once __DIR__ . '/Controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/Controllers/HomeController.php';
 require_once __DIR__ . '/Controllers/ProjectController.php';
-
 
 $database = new Database();
 $db = $database->getConnection();
@@ -21,9 +20,11 @@ $request = $_SERVER['REQUEST_URI'];
 
 // 2. Clean URL
 $basePath = '/pushforgood';
-$path = str_replace($basePath, '', $request);
+// Pro-tip: str_ireplace handles case-insensitivity just in case someone types /pushForGood
+$path = str_ireplace($basePath, '', $request);
 
 // 3. Remove any trailing slashes or query strings
+// This strips the ?id=5 away so the switch statement can match '/projects/delete' cleanly
 $path = parse_url($path, PHP_URL_PATH);
 $path = rtrim($path, '/');
 
@@ -72,28 +73,25 @@ switch ($path) {
 
     case '/projects/edit':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $projectController->update($resourceId); // Added $resourceId
+            $projectController->update(); // Removed ID parameter
         } else {
-            $projectController->showEdit($resourceId); // Added $resourceId
+            $projectController->showEdit(); // Removed ID parameter
         }
         break;
 
     case '/projects/delete':
-        $projectController->delete($resourceId); // Added $resourceId
+        $projectController->delete(); // Removed ID parameter
         break;
 
     case '/projects/view':
-        // No POST needed here, it's just a display page
-        $projectController->view($resourceId);
+        $projectController->view(); // Removed ID parameter
         break;
 
     // -- Admin Routes --
     case '/admin/login':
-        // If they click the submit button
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $authController->adminLogin();
         } else {
-            // If they are just loading the page
             $authController->showAdminLoginForm();
         }
         break;

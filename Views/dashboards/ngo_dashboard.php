@@ -119,9 +119,9 @@
                         </p>
 
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
-                            <a href="/pushforgood/projects/view/<?= $project['id'] ?>" style="background: #2ecc71; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px;">View</a>
-                            <a href="/pushforgood/projects/edit/<?= $project['id'] ?>" style="background: #3498db; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px;">Edit</a>
-                            <a href="/pushforgood/projects/delete/<?= $project['id'] ?>" style="background: #e74c3c; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px;">Delete</a>
+                            <a href="/pushforgood/projects/view?id=<?= $project['id'] ?>" class="btn">View</a>
+                            <a href="/pushforgood/projects/edit?id=<?= $project['id'] ?>" class="btn">Edit</a>
+                            <a href="/pushforgood/projects/delete?id=<?= $project['id'] ?>" class="btn" onclick="return confirm('Delete this project?');">Delete</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

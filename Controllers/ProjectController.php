@@ -43,40 +43,46 @@ class ProjectController
         $this->redirect('/dashboard');
     }
 
-    public function showEdit($id)
+    public function showEdit()
     {
+        // We grab it here instead
+        $id = $_GET['id'] ?? null;
+
         if (strtolower($_SESSION['userRole']) !== 'ngo') {
             $this->redirect('/pushforgood/dashboard');
             return;
         }
 
-        // Fetch the data to pre-fill the form
         $project = $this->projectModel->getProjectByIdAndUser($id, $_SESSION['userId']);
 
-        // If it doesn't exist or isn't theirs, kick them out
         if (!$project) {
             $this->redirect('/pushforgood/dashboard');
             return;
         }
 
-        // Render the view and pass the data! Matches your 'editProject.php' file
         $this->render('projects/editProject', ['project' => $project]);
     }
 
-    public function update($id)
+    // Notice the empty parentheses!
+    public function update()
     {
-        if (strtolower($_SESSION['userRole']) !== 'ngo') {
+        // 1. Grab the ID directly from the URL (e.g., ?id=4)
+        $id = $_GET['id'] ?? null;
+
+        // Security check: Make sure ID exists and they are an NGO
+        if (!$id || strtolower($_SESSION['userRole']) !== 'ngo') {
             $this->redirect('/pushforgood/dashboard');
             return;
         }
 
-        // Make sure the form isn't empty
+        // 2. Make sure the form isn't empty
         if (empty($_POST['title']) || empty($_POST['description']) || empty($_POST['deadline'])) {
-            $this->redirect('/pushforgood/projects/edit/' . $id);
+            // FIXED: We use the Query String format here so it doesn't 404
+            $this->redirect('/pushforgood/projects/edit?id=' . $id);
             return;
         }
 
-        // Run the secure update
+        // 3. Run the secure update
         $this->projectModel->updateProject(
             $id,
             $_SESSION['userId'],
@@ -87,10 +93,14 @@ class ProjectController
             $_POST['deadline']
         );
 
+        // Success! Back to the dashboard
         $this->redirect('/pushforgood/dashboard');
     }
-    public function view($id)
+    
+    public function view()
     {
+        $id = $_GET['id'] ?? null;
+
         if (!$id) $this->redirect('/dashboard');
 
         $project = $this->projectModel->getProjectsByUserId($id);
@@ -103,15 +113,18 @@ class ProjectController
         $this->render('projects/details', ['project' => $project]);
     }
 
-    public function delete($id)
+    public function delete()
     {
-        // Security check
-        if (strtolower($_SESSION['userRole']) !== 'ngo') {
+        // 1. Grab the ID from the query string
+        $id = $_GET['id'] ?? null;
+
+        // 2. Security Checks
+        if (!$id || strtolower($_SESSION['userRole']) !== 'ngo') {
             $this->redirect('/pushforgood/dashboard');
             return;
         }
 
-        // Run the secure delete
+        // 3. Run the secure delete
         $this->projectModel->deleteProject($id, $_SESSION['userId']);
         $this->redirect('/pushforgood/dashboard');
     }
