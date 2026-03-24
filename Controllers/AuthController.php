@@ -27,8 +27,8 @@ class AuthController
 
     public function login()
     {
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $email = trim($_POST['email']);
+        $password = $_POST['password'];
 
         if ($email === '' || $password === '') {
             $this->showLoginForm('Email and password are required.');

@@ -1,5 +1,4 @@
 <?php
-// Models/Student.php
 require_once 'User.php';
 require_once 'DashboardUI.php';
 
@@ -17,7 +16,7 @@ class Student extends User implements DashboardUI
                 'INSERT INTO users (user_type_id, user_name, email_address, user_password)
                 VALUES (:roleId, :user_name, :email_address, :user_password)'
             );
-    
+
             return $stmt->execute([
                 ':roleId' => $roleId,
                 ':user_name' => $data['user_name'],

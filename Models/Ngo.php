@@ -1,5 +1,4 @@
 <?php
-// Models/NGO.php
 require_once 'User.php';
 require_once 'DashboardUI.php';
 
@@ -20,7 +19,6 @@ class NGO extends User implements DashboardUI
         try {
             $hashedPassword = password_hash($data['user_password'], PASSWORD_DEFAULT);
 
-            // 1. Insert into users table
             $insertUser = $this->conn->prepare(
                 'INSERT INTO users (user_type_id, user_name, email_address, user_password)
                 VALUES (:roleId, :user_name, :email_address, :user_password)'
@@ -34,7 +32,6 @@ class NGO extends User implements DashboardUI
 
             $newUserId = (int) $this->conn->lastInsertId();
 
-            // 2. Insert into ngos table
             $insertNgo = $this->conn->prepare(
                 'INSERT INTO ngos (user_id, license_number)
                 VALUES (:userId, :licenseNumber)'

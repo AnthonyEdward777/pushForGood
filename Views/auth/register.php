@@ -47,7 +47,6 @@
     </main>
     <script src="/pushforgood/public/scripts/form_validation.js"></script>
     <script>
-        // This JavaScript is perfect. It handles the dynamic form display exactly as it should.
         const entitySelect = document.getElementById('entity');
         const ngoFields = document.getElementById('ngoFields');
         const licenseInput = document.getElementById('licenseNumber');

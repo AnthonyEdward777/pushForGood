@@ -16,10 +16,9 @@ abstract class User
         return $this->lastError;
     }
 
-    // Abstract method: Forces children to implement their own registration flow
+    // Abstract method
     abstract public function register($data);
 
-    // Shared Login Logic
     public static function login($db, $email, $password)
     {
         $stmt = $db->prepare(
@@ -44,7 +43,6 @@ abstract class User
         return false;
     }
 
-    // Helper function used by children during registration
     protected function getRoleId($entityName)
     {
         $stmt = $this->conn->prepare('SELECT id FROM user_types WHERE LOWER(type_name) = :role LIMIT 1');

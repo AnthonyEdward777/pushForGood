@@ -21,7 +21,7 @@ $reviewController = new ReviewController($db);
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Clean URL Handling
+// URL Handling
 $request = $_SERVER['REQUEST_URI'];
 
 $basePath = '/pushforgood';
@@ -66,7 +66,7 @@ switch ($path) {
         $authController->logout();
         break;
 
-    // Project Routes (NGO)
+    // Project Routes
     case '/projects/create':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $projectController->create();
@@ -109,10 +109,28 @@ switch ($path) {
             echo '<h1>405 Method Not Allowed</h1>';
         }
         break;
+
+    case '/admin/applications/delete':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->deleteApplication();
+        } else {
+            http_response_code(405);
+            echo '<h1>405 Method Not Allowed</h1>';
+        }
+        break;
     // Review Routes
     case '/reviews/create':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $reviewController->create();
+        } else {
+            http_response_code(405);
+            echo '<h1>405 Method Not Allowed</h1>';
+        }
+        break;
+
+    case '/admin/reviews/delete':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->deleteReview();
         } else {
             http_response_code(405);
             echo '<h1>405 Method Not Allowed</h1>';
@@ -131,24 +149,6 @@ switch ($path) {
     case '/admin/users/delete':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $adminController->deleteUser();
-        } else {
-            http_response_code(405);
-            echo '<h1>405 Method Not Allowed</h1>';
-        }
-        break;
-
-    case '/admin/applications/delete':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $adminController->deleteApplication();
-        } else {
-            http_response_code(405);
-            echo '<h1>405 Method Not Allowed</h1>';
-        }
-        break;
-
-    case '/admin/reviews/delete':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $adminController->deleteReview();
         } else {
             http_response_code(405);
             echo '<h1>405 Method Not Allowed</h1>';

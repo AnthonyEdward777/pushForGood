@@ -1,5 +1,4 @@
 <?php
-// Models/admin.php
 require_once 'User.php';
 require_once 'DashboardUI.php';
 
