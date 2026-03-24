@@ -14,15 +14,12 @@ class Database
     {
         $this->conn = null;
 
-        // Detect if we are on Localhost or Live Server
         if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1') {
-            // LOCAL SETTINGS (XAMPP)
             $this->host = "localhost";
             $this->db_name = "pushforgood";
             $this->username = "root";
             $this->password = "";
         } else {
-            // LIVE SETTINGS (Get these from InfinityFree Control Panel)
             $this->host = "sql310.infinityfree.com";
             $this->db_name = "if0_41294906_pushforgood";
             $this->username = "if0_41294906";

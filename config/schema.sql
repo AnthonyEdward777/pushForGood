@@ -1,13 +1,13 @@
 CREATE DATABASE IF NOT EXISTS pushforgood;
 USE pushforgood;
 
--- Table 1: roles (To handle Admin, NGO, and Student)
+-- Table 1: user_types
 CREATE TABLE IF NOT EXISTS user_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- Table 2: users (The core authentication table)
+-- Table 2: users 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_type_id INT NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
     FOREIGN KEY (user_type_id) REFERENCES user_types(id) ON DELETE CASCADE
 );
 
--- Table 3: ngos (Extended data specifically for NGOs)
+-- Table 3: ngos
 CREATE TABLE IF NOT EXISTS ngos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL UNIQUE,
@@ -32,13 +32,13 @@ CREATE TABLE IF NOT EXISTS ngos (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Table 4: categories (For the Student search/filter feature)
+-- Table 4: categories
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
 );
 
--- Table 5: projects (The volunteer postings created by NGOs)
+-- Table 5: projects 
 CREATE TABLE IF NOT EXISTS projects (
     id INT AUTO_INCREMENT PRIMARY KEY,
     ngo_id INT NOT NULL,
@@ -56,11 +56,11 @@ CREATE TABLE IF NOT EXISTS projects (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
--- Table 6: applications (Links a Student to a specific Project)
+-- Table 6: applications 
 CREATE TABLE IF NOT EXISTS applications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
-    student_id INT NOT NULL, -- This links back to the users table
+    student_id INT NOT NULL, 
     comment TEXT,
     file_path VARCHAR(255),
     status ENUM('Pending', 'Accepted', 'Rejected') DEFAULT 'Pending',
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS applications (
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Table 7: reviews (Feedback left after a project is completed)
+-- Table 7: reviews 
 CREATE TABLE IF NOT EXISTS reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Table 8: contracts (Generated when an NGO accepts a student)
+-- Table 8: contracts
 CREATE TABLE IF NOT EXISTS contracts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     application_id INT NOT NULL UNIQUE,
