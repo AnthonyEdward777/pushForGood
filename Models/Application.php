@@ -70,11 +70,13 @@ class Application
     public function getApplicationsByProjectForNgo($projectId, $ngoUserId)
     {
         $stmt = $this->conn->prepare(
-            'SELECT a.*, u.user_name AS student_name, u.email_address AS student_email
+            'SELECT a.*, u.user_name AS student_name, u.email_address AS student_email,
+                                        c.id AS contract_id, c.contract_number
              FROM applications a
              INNER JOIN projects p ON p.id = a.project_id
              INNER JOIN ngos n ON n.id = p.ngo_id
              INNER JOIN users u ON u.id = a.student_id
+                         LEFT JOIN contracts c ON c.application_id = a.id AND c.deleted_at IS NULL
              WHERE a.project_id = :project_id
                AND n.user_id = :ngo_user_id
                AND a.deleted_at IS NULL
@@ -109,11 +111,13 @@ class Application
     public function getApplicationsByStudent($studentId)
     {
         $stmt = $this->conn->prepare(
-            'SELECT a.*, p.title AS project_title, p.deadline AS project_deadline, u.user_name AS ngo_name
+            'SELECT a.*, p.title AS project_title, p.deadline AS project_deadline, u.user_name AS ngo_name,
+                                        c.id AS contract_id, c.contract_number
              FROM applications a
              INNER JOIN projects p ON p.id = a.project_id
              INNER JOIN ngos n ON n.id = p.ngo_id
              INNER JOIN users u ON u.id = n.user_id
+                         LEFT JOIN contracts c ON c.application_id = a.id AND c.deleted_at IS NULL
              WHERE a.student_id = :student_id
                AND a.deleted_at IS NULL
                AND p.deleted_at IS NULL

@@ -9,17 +9,17 @@ class Project
         $this->db = $db;
     }
 
-    public function createProject($user_id, $title, $description, $skills, $location, $deadline)
+    public function createProject($user_id, $categoryId, $title, $description, $skills, $location, $deadline)
     {
         $query = "INSERT INTO projects 
     (ngo_id, category_id, title, description, skills, location, deadline, status) 
     VALUES (
         (SELECT id FROM ngos WHERE user_id = ? LIMIT 1), 
-        1, ?, ?, ?, ?, ?, 'Open'
+        ?, ?, ?, ?, ?, ?, 'Open'
     )";
 
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([$user_id, $title, $description, $skills, $location, $deadline]);
+        return $stmt->execute([$user_id, $categoryId, $title, $description, $skills, $location, $deadline]);
     }
 
     public function getProjectsByUserId($user_id)
@@ -44,15 +44,15 @@ class Project
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateProject($project_id, $user_id, $title, $description, $skills, $location, $deadline)
+    public function updateProject($project_id, $user_id, $categoryId, $title, $description, $skills, $location, $deadline)
     {
         $query = "UPDATE projects p
                   JOIN ngos n ON p.ngo_id = n.id
-                  SET p.title = ?, p.description = ?, p.skills = ?, p.location = ?, p.deadline = ?
+                  SET p.category_id = ?, p.title = ?, p.description = ?, p.skills = ?, p.location = ?, p.deadline = ?
                   WHERE p.id = ? AND n.user_id = ?";
 
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([$title, $description, $skills, $location, $deadline, $project_id, $user_id]);
+        return $stmt->execute([$categoryId, $title, $description, $skills, $location, $deadline, $project_id, $user_id]);
     }
 
     public function deleteProject($project_id, $user_id)

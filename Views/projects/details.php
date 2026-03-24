@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($project['title']) ?> | PushForGood</title>
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/app_theme.css">
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/project_details.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/app_theme.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/project_details.css">
 </head>
 
 <body>
 
     <div class="project-container">
+        <a href="<?= basePath() ?>/dashboard" class="back-arrow" aria-label="Back to dashboard">&larr;</a>
         <div class="status-bar">
             Project ID: #<?= (int) $project['id'] ?> • <?= htmlspecialchars($project['status'] ?? 'Open') ?>
         </div>
@@ -52,15 +53,15 @@
 
         <div class="action-tray">
             <?php if (strtolower($_SESSION['userRole'] ?? '') === 'ngo'): ?>
-                <a href="/pushforgood/projects/edit?id=<?= (int) $project['id'] ?>" class="btn btn-edit">Edit Listing</a>
-                <a href="/pushforgood/projects/delete?id=<?= (int) $project['id'] ?>" class="btn btn-delete" onclick="return confirm('Archive this project?')">Delete Project</a>
+                <a href="<?= basePath() ?>/projects/edit?id=<?= (int) $project['id'] ?>" class="btn btn-edit">Edit Listing</a>
+                <a href="<?= basePath() ?>/projects/delete?id=<?= (int) $project['id'] ?>" class="btn btn-delete" onclick="return confirm('Archive this project?')">Delete Project</a>
             <?php elseif (strtolower($_SESSION['userRole'] ?? '') === 'student'): ?>
                 <?php if (!empty($alreadyApplied)): ?>
                     <button type="button" class="btn btn-secondary" disabled>You already applied</button>
                 <?php elseif (strtolower($project['status'] ?? '') !== 'open'): ?>
                     <button type="button" class="btn btn-secondary" disabled>Project is closed</button>
                 <?php else: ?>
-                    <form method="POST" action="/pushforgood/projects/apply" class="apply-form" enctype="multipart/form-data" data-enhanced-validation="true">
+                    <form method="POST" action="<?= basePath() ?>/projects/apply" class="apply-form" enctype="multipart/form-data" data-enhanced-validation="true">
                         <input type="hidden" name="project_id" value="<?= (int) $project['id'] ?>">
                         <textarea name="comment" rows="4" maxlength="1000" placeholder="Tell the NGO why you are a good fit (optional)" title="Max 1000 characters." data-error-maxlength="Comment must be 1000 characters or fewer."></textarea>
                         <small class="field-hint">Optional, but a short intro increases your chance of acceptance.</small>
@@ -70,7 +71,7 @@
                     </form>
                 <?php endif; ?>
             <?php else: ?>
-                <a href="/pushforgood/dashboard" class="btn btn-edit">Back to Dashboard</a>
+                <a href="<?= basePath() ?>/dashboard" class="btn btn-edit">Back to Dashboard</a>
             <?php endif; ?>
         </div>
 
@@ -99,7 +100,7 @@
                                     <td><?= nl2br(htmlspecialchars($application['comment'] ?? '')) ?></td>
                                     <td>
                                         <?php if (!empty($application['file_path'])): ?>
-                                            <a href="/pushforgood/public/<?= htmlspecialchars($application['file_path']) ?>" target="_blank" rel="noopener">View CV</a>
+                                            <a href="<?= basePath() ?>/public/<?= htmlspecialchars($application['file_path']) ?>" target="_blank" rel="noopener">View CV</a>
                                         <?php else: ?>
                                             <span>No file</span>
                                         <?php endif; ?>
@@ -109,18 +110,22 @@
                                     </td>
                                     <td>
                                         <?php if ($status === 'pending'): ?>
-                                            <form class="inline-form" method="POST" action="/pushforgood/applications/update-status">
+                                            <form class="inline-form" method="POST" action="<?= basePath() ?>/applications/update-status">
                                                 <input type="hidden" name="application_id" value="<?= (int) $application['id'] ?>">
                                                 <input type="hidden" name="project_id" value="<?= (int) $project['id'] ?>">
                                                 <input type="hidden" name="status" value="Accepted">
                                                 <button type="submit" class="btn btn-apply">Approve</button>
                                             </form>
-                                            <form class="inline-form" method="POST" action="/pushforgood/applications/update-status">
+                                            <form class="inline-form" method="POST" action="<?= basePath() ?>/applications/update-status\">
                                                 <input type="hidden" name="application_id" value="<?= (int) $application['id'] ?>">
                                                 <input type="hidden" name="project_id" value="<?= (int) $project['id'] ?>">
                                                 <input type="hidden" name="status" value="Rejected">
                                                 <button type="submit" class="btn btn-delete">Reject</button>
                                             </form>
+                                        <?php elseif ($status === 'accepted' && !empty($application['contract_id'])): ?>
+                                            <a href="<?= basePath() ?>/contracts/download?application_id=<?= (int) $application['id'] ?>" class="btn btn-edit">Download Contract</a>
+                                        <?php elseif ($status === 'accepted'): ?>
+                                            <span>Contract pending</span>
                                         <?php else: ?>
                                             <span>-</span>
                                         <?php endif; ?>
@@ -141,7 +146,7 @@
                 <?php if (!empty($alreadyReviewed)): ?>
                     <p class="muted-note">You already reviewed this project.</p>
                 <?php elseif (!empty($canLeaveReview)): ?>
-                    <form class="review-form" method="POST" action="/pushforgood/reviews/create" data-enhanced-validation="true">
+                    <form class="review-form" method="POST" action="<?= basePath() ?>/reviews/create" data-enhanced-validation="true">
                         <input type="hidden" name="project_id" value="<?= (int) $project['id'] ?>">
                         <label for="rating">Rating</label>
                         <select id="rating" name="rating" required data-error-required="Please select a rating.">
@@ -194,7 +199,7 @@
         </div>
     </div>
 
-    <script src="/pushforgood/public/scripts/form_validation.js"></script>
+    <script src="<?= basePath() ?>/public/scripts/form_validation.js"></script>
 
 </body>
 

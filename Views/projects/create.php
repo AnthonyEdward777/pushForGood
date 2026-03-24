@@ -5,18 +5,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/pushforgood/public/images/favicon.png">
-    <title>Create Project | PushForGood</title>
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/app_theme.css">
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/project_create.css">
+    <link rel="icon" type="image/x-icon" href="<?= basePath() ?>/public/images/favicon.png">
+    <title>Create Project - Push For Good</title>
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/app_theme.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/project_create.css">
 </head>
 
 <body>
 
     <div class="container">
+        <a href="<?= basePath() ?>/dashboard" class="back-arrow" aria-label="Back to dashboard">&larr;</a>
         <h2>Post a New Opportunity</h2>
 
-        <form method="POST" action="/pushforgood/projects/create" data-enhanced-validation="true">
+        <form method="POST" action="<?= basePath() ?>/projects/create" data-enhanced-validation="true">
+
+            <div class="form-group">
+                <label for="category_id">Category</label>
+                <select id="category_id" name="category_id" required data-error-required="Please choose a category.">
+                    <option value="">Select a category</option>
+                    <?php foreach (($categories ?? []) as $category): ?>
+                        <option value="<?= (int) $category['id'] ?>"><?= htmlspecialchars($category['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <small class="field-hint">Choose the best fit so students can find it faster.</small>
+            </div>
 
             <div class="form-group">
                 <label for="title">Project Title</label>
@@ -49,12 +61,12 @@
 
             <div class="actions">
                 <button type="submit" class="btn">Launch Project</button>
-                <a href="/pushforgood/dashboard" class="btn btn-cancel">Cancel</a>
+                <a href="<?= basePath() ?>/dashboard" class="btn btn-cancel">Cancel</a>
             </div>
         </form>
     </div>
 
-    <script src="/pushforgood/public/scripts/form_validation.js"></script>
+    <script src="<?= basePath() ?>/public/scripts/form_validation.js"></script>
 
 </body>
 

@@ -86,6 +86,18 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Table 8: contracts (Generated when an NGO accepts a student)
+CREATE TABLE IF NOT EXISTS contracts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    application_id INT NOT NULL UNIQUE,
+    contract_number VARCHAR(60) NOT NULL UNIQUE,
+    terms_text TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE
+);
+
 -- --------------------------------------------------------
 -- Initial Data Seeding
 -- --------------------------------------------------------

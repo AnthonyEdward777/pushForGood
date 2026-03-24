@@ -4,21 +4,38 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 class Database
 {
-    private $host = "localhost";
-    private $dbName = "pushforgood";
-    private $username = "root";
-    private $password = "";
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
     public $conn;
 
     public function getConnection()
     {
         $this->conn = null;
-        try {
-            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->dbName, $this->username, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $exception) {
-            error_log('Database connection error: ' . $exception->getMessage());
+
+        // Detect if we are on Localhost or Live Server
+        if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1') {
+            // LOCAL SETTINGS (XAMPP)
+            $this->host = "localhost";
+            $this->db_name = "pushforgood";
+            $this->username = "root";
+            $this->password = "";
+        } else {
+            // LIVE SETTINGS (Get these from InfinityFree Control Panel)
+            $this->host = "sql310.infinityfree.com";
+            $this->db_name = "if0_41294906_pushforgood";
+            $this->username = "if0_41294906";
+            $this->password = "j3xF3LtLQnqSC";
         }
+
+        try {
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            $this->conn->exec("set names utf8");
+        } catch (PDOException $exception) {
+            echo "Connection error: " . $exception->getMessage();
+        }
+
         return $this->conn;
     }
 }

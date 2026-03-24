@@ -5,22 +5,22 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="/pushforgood/public/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="<?= basePath() ?>/public/images/favicon.png">
     <title>Sign Up - Push For Good</title>
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/credentials.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/credentials.css">
 </head>
 
 <body>
     <main class="auth-page">
         <div class="credentialsContainer">
-            <img src="/pushforgood/public/images/favicon.png" alt="Logo" class="logo">
+            <img src="<?= basePath() ?>/public/images/favicon.png" alt="Logo" class="logo">
             <h2>Sign Up</h2>
 
             <?php if (!empty($errorMessage)): ?>
                 <p class="formMessage error"><?php echo htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?>
 
-            <form class="credentialsForm" method="POST" action="/pushforgood/register" data-enhanced-validation="true">
+            <form class="credentialsForm" method="POST" action="<?= basePath() ?>/register" data-enhanced-validation="true">
                 <input type="text" name="name" placeholder="Full Name" minlength="2" maxlength="100" autocomplete="name" title="Name must be between 2 and 100 characters." required data-error-required="Full name is required." data-error-minlength="Name must be at least 2 characters." data-error-maxlength="Name must be 100 characters or fewer.">
                 <small class="fieldHint">Enter your real name for project applications.</small>
                 <input type="email" name="email" placeholder="Email" autocomplete="email" required data-error-required="Email is required." data-error-email="Please enter a valid email address.">
@@ -42,10 +42,10 @@
                 <button type="submit">Register</button>
             </form>
 
-            <p class="formLinks">Already have an account? <a href="/pushforgood/login">Log in</a></p>
+            <p class="formLinks">Already have an account? <a href="<?= basePath() ?>/login">Log in</a></p>
         </div>
     </main>
-    <script src="/pushforgood/public/scripts/form_validation.js"></script>
+    <script src="<?= basePath() ?>/public/scripts/form_validation.js"></script>
     <script>
         const entitySelect = document.getElementById('entity');
         const ngoFields = document.getElementById('ngoFields');

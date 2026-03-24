@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGO Dashboard - PushForGood</title>
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/app_theme.css">
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/ngo_dashboard.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/app_theme.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/ngo_dashboard.css">
 </head>
 
 <body>
@@ -17,12 +17,12 @@
                 <h1 class="page-title">Welcome, <?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>!</h1>
                 <span class="badge"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES, 'UTF-8') ?> Access</span>
             </div>
-            <a href="/pushforgood/logout" class="btn btn-danger">Log Out</a>
+            <a href="<?= basePath() ?>/logout" class="btn btn-danger">Log Out</a>
         </div>
 
         <div class="action-bar">
             <h2 class="section-title">Your Active Listings</h2>
-            <a href="/pushforgood/projects/create" class="btn btn-primary">+ Post New Opportunity</a>
+            <a href="<?= basePath() ?>/projects/create" class="btn btn-primary">+ Post New Opportunity</a>
         </div>
 
         <div class="project-list">
@@ -38,9 +38,9 @@
                         </p>
 
                         <div class="project-actions">
-                            <a href="/pushforgood/projects/view?id=<?= $project['id'] ?>" class="btn btn-secondary">View</a>
-                            <a href="/pushforgood/projects/edit?id=<?= $project['id'] ?>" class="btn btn-primary">Edit</a>
-                            <a href="/pushforgood/projects/delete?id=<?= $project['id'] ?>" class="btn btn-danger" onclick="return confirm('Delete this project?');">Delete</a>
+                            <a href="<?= basePath() ?>/projects/view?id=<?= $project['id'] ?>" class="btn btn-secondary">View</a>
+                            <a href="<?= basePath() ?>/projects/edit?id=<?= $project['id'] ?>" class="btn btn-primary">Edit</a>
+                            <a href="<?= basePath() ?>/projects/delete?id=<?= $project['id'] ?>" class="btn btn-danger" onclick="return confirm('Delete this project?');">Delete</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -2,6 +2,7 @@
 ini_set('display_errors', '1');
 error_reporting(E_ALL);
 session_start();
+require_once __DIR__ . '/config/helpers.php';
 require_once __DIR__ . '/Controllers/AuthController.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/Controllers/HomeController.php';
@@ -9,6 +10,7 @@ require_once __DIR__ . '/Controllers/ProjectController.php';
 require_once __DIR__ . '/Controllers/ApplicationController.php';
 require_once __DIR__ . '/Controllers/AdminController.php';
 require_once __DIR__ . '/Controllers/ReviewController.php';
+require_once __DIR__ . '/Controllers/ContractController.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -18,17 +20,17 @@ $homeController = new HomeController();
 $applicationController = new ApplicationController($db);
 $adminController = new AdminController($db);
 $reviewController = new ReviewController($db);
-
-$method = $_SERVER['REQUEST_METHOD'];
+$contractController = new ContractController($db);
 
 // URL Handling
+$method = $_SERVER['REQUEST_METHOD'];
 $request = $_SERVER['REQUEST_URI'];
+$basePath = basePath();
 
-$basePath = '/pushforgood';
-$path = str_ireplace($basePath, '', $request);
+// Remove query string from path
+$path = strtok($request, '?');
 
-$path = parse_url($path, PHP_URL_PATH);
-$path = rtrim($path, '/');
+$path = str_ireplace($basePath, '', $path);
 
 // Switch Router
 switch ($path) {
@@ -118,6 +120,16 @@ switch ($path) {
             echo '<h1>405 Method Not Allowed</h1>';
         }
         break;
+
+    // Contract Routes
+    case '/contracts/download':
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $contractController->download();
+        } else {
+            http_response_code(405);
+            echo '<h1>405 Method Not Allowed</h1>';
+        }
+        break;
     // Review Routes
     case '/reviews/create':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -149,6 +161,33 @@ switch ($path) {
     case '/admin/users/delete':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $adminController->deleteUser();
+        } else {
+            http_response_code(405);
+            echo '<h1>405 Method Not Allowed</h1>';
+        }
+        break;
+
+    case '/admin/categories/create':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->createCategory();
+        } else {
+            http_response_code(405);
+            echo '<h1>405 Method Not Allowed</h1>';
+        }
+        break;
+
+    case '/admin/categories/update':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->updateCategory();
+        } else {
+            http_response_code(405);
+            echo '<h1>405 Method Not Allowed</h1>';
+        }
+        break;
+
+    case '/admin/categories/delete':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->deleteCategory();
         } else {
             http_response_code(405);
             echo '<h1>405 Method Not Allowed</h1>';

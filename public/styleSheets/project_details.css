@@ -1,4 +1,5 @@
 .project-container {
+    position: relative;
     max-width: 1000px;
     margin: 0 auto;
     background: var(--pfg-surface);
@@ -6,6 +7,30 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.back-arrow {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 22px;
+    line-height: 1;
+    background: #fff;
+    color: var(--pfg-primary);
+    border: 2px solid var(--pfg-border);
+}
+
+.back-arrow:hover {
+    background: var(--pfg-primary);
+    color: #fff;
 }
 
 .status-bar {

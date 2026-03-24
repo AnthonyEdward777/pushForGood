@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | PushForGood</title>
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/app_theme.css">
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/admin_dashboard.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/app_theme.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/admin_dashboard.css">
 </head>
 
 <body>
@@ -17,7 +17,7 @@
                 <h1>Welcome, <?= htmlspecialchars($name) ?></h1>
                 <span class="role-badge"><?= htmlspecialchars($role) ?> Access</span>
             </div>
-            <a href="/pushforgood/logout" class="btn-logout">Logout</a>
+            <a href="<?= basePath() ?>/logout" class="btn-logout">Logout</a>
         </div>
 
         <?php if (!empty($flashSuccess)): ?>
@@ -27,6 +27,52 @@
         <?php if (!empty($flashError)): ?>
             <div class="flash flash-error"><?= htmlspecialchars($flashError) ?></div>
         <?php endif; ?>
+
+        <div class="section">
+            <h2>Manage Categories</h2>
+            <p>Create, rename, and delete project categories used by NGOs.</p>
+
+            <form class="category-create-form" method="POST" action="<?= basePath() ?>/admin/categories/create" data-enhanced-validation="true">
+                <input type="text" name="name" maxlength="100" placeholder="New category name" required data-error-required="Category name is required." data-error-maxlength="Category name must be 100 characters or fewer.">
+                <button type="submit" class="btn btn-primary">Add Category</button>
+            </form>
+
+            <div class="table-wrap">
+                <?php if (!empty($categories)): ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($categories as $category): ?>
+                                <tr>
+                                    <td><?= (int) $category['id'] ?></td>
+                                    <td>
+                                        <form class="inline-form" method="POST" action="<?= basePath() ?>/admin/categories/update" data-enhanced-validation="true">
+                                            <input type="hidden" name="category_id" value="<?= (int) $category['id'] ?>">
+                                            <input type="text" name="name" maxlength="100" value="<?= htmlspecialchars($category['name']) ?>" required data-error-required="Category name is required." data-error-maxlength="Category name must be 100 characters or fewer.">
+                                            <button type="submit" class="btn btn-secondary">Rename</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="<?= basePath() ?>/admin/categories/delete" onsubmit="return confirm('Delete this category? This only works if no active project uses it.');">
+                                            <input type="hidden" name="category_id" value="<?= (int) $category['id'] ?>">
+                                            <button type="submit" class="btn btn-delete">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <p class="muted">No categories found.</p>
+                <?php endif; ?>
+            </div>
+        </div>
 
         <div class="section">
             <h2>Manage Students and NGOs</h2>
@@ -55,7 +101,7 @@
                                     <td><?= htmlspecialchars($user['email_address']) ?></td>
                                     <td><?= !empty($user['created_at']) ? date('M d, Y', strtotime($user['created_at'])) : 'N/A' ?></td>
                                     <td>
-                                        <form method="POST" action="/pushforgood/admin/users/delete" onsubmit="return confirm('Remove this user account? This may also remove related records.');">
+                                        <form method="POST" action="<?= basePath() ?>/admin/users/delete" onsubmit="return confirm('Remove this user account? This may also remove related records.');">
                                             <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
                                             <button type="submit" class="btn btn-delete">Remove User</button>
                                         </form>
@@ -108,7 +154,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <form method="POST" action="/pushforgood/admin/applications/delete" onsubmit="return confirm('Remove this application?');">
+                                        <form method="POST" action="<?= basePath() ?>/admin/applications/delete" onsubmit="return confirm('Remove this application?');">
                                             <input type="hidden" name="application_id" value="<?= (int) $application['id'] ?>">
                                             <button type="submit" class="btn btn-delete">Remove Application</button>
                                         </form>
@@ -156,7 +202,7 @@
                                     </td>
                                     <td><?= (int) $review['rating'] ?>/5</td>
                                     <td>
-                                        <form method="POST" action="/pushforgood/admin/reviews/delete" onsubmit="return confirm('Remove this review?');">
+                                        <form method="POST" action="<?= basePath() ?>/admin/reviews/delete" onsubmit="return confirm('Remove this review?');">
                                             <input type="hidden" name="review_id" value="<?= (int) $review['id'] ?>">
                                             <button type="submit" class="btn btn-delete">Remove Review</button>
                                         </form>

@@ -108,6 +108,36 @@ th {
     background: var(--pfg-primary);
 }
 
+.btn-primary {
+    background: var(--pfg-primary-alt);
+}
+
+.btn-secondary {
+    background: var(--pfg-accent);
+}
+
+.category-create-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.category-create-form input,
+.inline-form input[type="text"] {
+    border: 1px solid #d7d7d7;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: inherit;
+}
+
+.inline-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 .status-pill {
     display: inline-block;
     border-radius: 999px;

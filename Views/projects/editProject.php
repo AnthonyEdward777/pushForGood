@@ -5,18 +5,32 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="/pushforgood/public/images/favicon.png">
+    <link rel=\"icon\" type=\"image/x-icon\" href=\"<?= basePath() ?>/public/images/favicon.png\">
     <title>Edit Project</title>
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/app_theme.css">
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/project_edit.css">
+    <link rel=\"stylesheet\" href=\"<?= basePath() ?>/public/stylesheets/app_theme.css\">
+    <link rel=\"stylesheet\" href=\"<?= basePath() ?>/public/stylesheets/project_edit.css\">
 </head>
 
 <body>
 
     <div class="container">
+        <a href="<?= basePath() ?>/dashboard" class="back-arrow" aria-label="Back to dashboard">&larr;</a>
         <h2>Edit Project</h2>
 
-        <form method="POST" action="/pushforgood/projects/edit?id=<?= htmlspecialchars($project['id']); ?>" data-enhanced-validation="true">
+        <form method="POST" action="<?= basePath() ?>/projects/edit?id=<?= htmlspecialchars($project['id']); ?>" data-enhanced-validation="true">
+
+            <div class="form-group">
+                <label for="category_id">Category</label>
+                <select id="category_id" name="category_id" required data-error-required="Please choose a category.">
+                    <option value="">Select a category</option>
+                    <?php foreach (($categories ?? []) as $category): ?>
+                        <option value="<?= (int) $category['id'] ?>" <?= ((int) ($project['category_id'] ?? 0) === (int) $category['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($category['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <small class="field-hint">Switch category if the opportunity focus changed.</small>
+            </div>
 
             <div class="form-group">
                 <label for="title">Title</label>
@@ -49,12 +63,12 @@
 
             <div class="actions">
                 <button type="submit" class="btn">Update Project</button>
-                <a href="/pushforgood/dashboard" class="btn btn-cancel">Cancel</a>
+                <a href="<?= basePath() ?>/dashboard" class="btn btn-cancel">Cancel</a>
             </div>
         </form>
     </div>
 
-    <script src="/pushforgood/public/scripts/form_validation.js"></script>
+    <script src="<?= basePath() ?>/public/scripts/form_validation.js"></script>
 
 </body>
 

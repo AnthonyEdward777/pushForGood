@@ -19,7 +19,7 @@ class AuthController
     public function showLoginForm($errorMessage = '')
     {
         if (isset($_SESSION['userId'])) {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
         }
 
         $this->render('auth/login', ['errorMessage' => $errorMessage]);
@@ -46,7 +46,7 @@ class AuthController
         $_SESSION['userName'] = $loggedInUser['name'];
         $_SESSION['userRole'] = $loggedInUser['role'];
 
-        $this->redirect('/pushforgood/dashboard');
+        $this->redirect(basePath() . '/dashboard');
     }
 
     // --- Register Flow ---
@@ -118,10 +118,10 @@ class AuthController
             $_SESSION['userRole'] = $loggedInUser['role'];
 
             // Drop them directly into the application!
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
         } else {
             // A safety fallback, just in case something weird happens
-            $this->redirect('/pushforgood/login');
+            $this->redirect(basePath() . '/login');
         }
     }
 
@@ -130,7 +130,7 @@ class AuthController
     {
         // 1. Security Check: Are they actually logged in?
         if (!isset($_SESSION['userId'])) {
-            $this->redirect('/pushforgood/login');
+            $this->redirect(basePath() . '/login');
             return; // Always return after a redirect to stop script execution
         }
 
@@ -199,6 +199,7 @@ class AuthController
                     'users' => $adminModel->getManageableUsers(),
                     'applications' => $adminModel->getAllApplications(),
                     'reviews' => $adminModel->getAllReviews(),
+                    'categories' => $adminModel->getAllCategories(),
                     'flashSuccess' => $_SESSION['flash_success'] ?? null,
                     'flashError' => $_SESSION['flash_error'] ?? null,
                 ]);
@@ -208,7 +209,7 @@ class AuthController
 
             default:
                 // If they somehow have no role, force them out for security
-                $this->redirect('/pushforgood/logout');
+                $this->redirect(basePath() . '/logout');
                 break;
         }
     }
@@ -220,7 +221,7 @@ class AuthController
             setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
         }
         session_destroy();
-        $this->redirect('/pushforgood/login');
+        $this->redirect(basePath() . '/login');
     }
 
     // --- Admin Authentication ---
@@ -252,7 +253,7 @@ class AuthController
             $_SESSION['userRole'] = $loggedInUser['role'];
 
             // Route them to the main traffic cop, which will load the admin dashboard
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
         } else {
             // Give a generic error so hackers don't know if the email exists or not
             $this->showAdminLoginForm('Invalid administrator credentials.');

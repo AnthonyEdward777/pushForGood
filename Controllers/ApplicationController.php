@@ -1,29 +1,32 @@
 <?php
 require_once __DIR__ . '/../Models/Application.php';
 require_once __DIR__ . '/../Models/Project.php';
+require_once __DIR__ . '/../Models/Contract.php';
 
 class ApplicationController
 {
     private $db;
     private $applicationModel;
     private $projectModel;
+    private $contractModel;
 
     public function __construct($db)
     {
         $this->db = $db;
         $this->applicationModel = new Application($db);
         $this->projectModel = new Project($db);
+        $this->contractModel = new Contract($db);
     }
 
     public function apply()
     {
         if (!isset($_SESSION['userId']) || strtolower($_SESSION['userRole'] ?? '') !== 'student') {
-            $this->redirect('/pushforgood/login');
+            $this->redirect(basePath() . '/login');
             return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
@@ -34,20 +37,20 @@ class ApplicationController
 
         if ($projectId <= 0) {
             $_SESSION['flash_error'] = 'Invalid project selected.';
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
         $project = $this->projectModel->getProjectById($projectId);
         if (!$project || strtolower($project['status'] ?? '') !== 'open') {
             $_SESSION['flash_error'] = 'This project is not available for application.';
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
         if (!isset($_FILES['submission_file']) || $_FILES['submission_file']['error'] !== UPLOAD_ERR_OK) {
             $_SESSION['flash_error'] = 'CV file is required.';
-            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            $this->redirect(basePath() . '/projects/view?id=' . $projectId);
             return;
         }
 
@@ -60,20 +63,20 @@ class ApplicationController
 
         if (!in_array($detectedType, $allowedTypes, true)) {
             $_SESSION['flash_error'] = 'File must be PDF or JPEG only.';
-            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            $this->redirect(basePath() . '/projects/view?id=' . $projectId);
             return;
         }
 
         if ($fileSize > $maxSize) {
             $_SESSION['flash_error'] = 'File size must be less than 5MB.';
-            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            $this->redirect(basePath() . '/projects/view?id=' . $projectId);
             return;
         }
 
         $targetDir = __DIR__ . '/../public/uploads/';
         if (!is_dir($targetDir) && !mkdir($targetDir, 0777, true) && !is_dir($targetDir)) {
             $_SESSION['flash_error'] = 'Upload directory is not available.';
-            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            $this->redirect(basePath() . '/projects/view?id=' . $projectId);
             return;
         }
 
@@ -85,7 +88,7 @@ class ApplicationController
 
         if (!move_uploaded_file($tmpFile, $targetFile)) {
             $_SESSION['flash_error'] = 'Could not upload CV file.';
-            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            $this->redirect(basePath() . '/projects/view?id=' . $projectId);
             return;
         }
 
@@ -98,18 +101,18 @@ class ApplicationController
             $_SESSION['flash_error'] = $this->applicationModel->getLastError() ?: 'Could not submit your application.';
         }
 
-        $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+        $this->redirect(basePath() . '/projects/view?id=' . $projectId);
     }
 
     public function updateStatus()
     {
         if (!isset($_SESSION['userId']) || strtolower($_SESSION['userRole'] ?? '') !== 'ngo') {
-            $this->redirect('/pushforgood/login');
+            $this->redirect(basePath() . '/login');
             return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
@@ -119,7 +122,7 @@ class ApplicationController
 
         if ($applicationId <= 0 || $projectId <= 0 || !in_array($status, ['Accepted', 'Rejected'], true)) {
             $_SESSION['flash_error'] = 'Invalid application status request.';
-            $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+            $this->redirect(basePath() . '/projects/view?id=' . $projectId);
             return;
         }
 
@@ -132,11 +135,25 @@ class ApplicationController
 
         if ($updated) {
             $_SESSION['flash_success'] = 'Application status updated to ' . $status . '.';
+
+            if ($status === 'Accepted') {
+                $contractReady = $this->contractModel->ensureForAcceptedApplication(
+                    $applicationId,
+                    $projectId,
+                    (int) $_SESSION['userId']
+                );
+
+                if ($contractReady) {
+                    $_SESSION['flash_success'] .= ' Contract is ready for download.';
+                } else {
+                    $_SESSION['flash_error'] = 'Application accepted, but contract generation failed. Please verify contracts table exists.';
+                }
+            }
         } else {
             $_SESSION['flash_error'] = $this->applicationModel->getLastError() ?: 'Could not update application status.';
         }
 
-        $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+        $this->redirect(basePath() . '/projects/view?id=' . $projectId);
     }
 
     private function redirect($location)

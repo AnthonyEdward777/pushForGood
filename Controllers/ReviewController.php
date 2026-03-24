@@ -16,12 +16,12 @@ class ReviewController
     public function create()
     {
         if (!isset($_SESSION['userId']) || strtolower($_SESSION['userRole'] ?? '') !== 'student') {
-            $this->redirect('/pushforgood/login');
+            $this->redirect(basePath() . '/login');
             return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
@@ -32,14 +32,14 @@ class ReviewController
 
         if ($projectId <= 0) {
             $_SESSION['flash_error'] = 'Invalid project selected for review.';
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
         $project = $this->projectModel->getProjectById($projectId);
         if (!$project) {
             $_SESSION['flash_error'] = 'Project not found.';
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
@@ -50,7 +50,7 @@ class ReviewController
             $_SESSION['flash_error'] = $this->reviewModel->getLastError() ?: 'Could not submit review.';
         }
 
-        $this->redirect('/pushforgood/projects/view?id=' . $projectId);
+        $this->redirect(basePath() . '/projects/view?id=' . $projectId);
     }
 
     private function redirect($location)

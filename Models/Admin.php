@@ -132,4 +132,92 @@ class Admin extends User implements DashboardUI
 		$stmt->execute([':id' => (int) $reviewId]);
 		return $stmt->rowCount() > 0;
 	}
+
+	public function getAllCategories()
+	{
+		$stmt = $this->conn->prepare(
+			'SELECT id, name
+			 FROM categories
+			 ORDER BY name ASC'
+		);
+
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	public function createCategory($name)
+	{
+		$name = trim((string) $name);
+		if ($name === '') {
+			return false;
+		}
+
+		$stmt = $this->conn->prepare(
+			'INSERT INTO categories (name)
+			 VALUES (:name)'
+		);
+
+		try {
+			return $stmt->execute([':name' => $name]);
+		} catch (PDOException $exception) {
+			if ($exception->getCode() === '23000') {
+				return false;
+			}
+			error_log('Category creation failed: ' . $exception->getMessage());
+			return false;
+		}
+	}
+
+	public function updateCategory($categoryId, $name)
+	{
+		$name = trim((string) $name);
+		if ($categoryId <= 0 || $name === '') {
+			return false;
+		}
+
+		$stmt = $this->conn->prepare(
+			'UPDATE categories
+			 SET name = :name
+			 WHERE id = :id'
+		);
+
+		try {
+			$stmt->execute([
+				':name' => $name,
+				':id' => (int) $categoryId,
+			]);
+
+			return $stmt->rowCount() > 0;
+		} catch (PDOException $exception) {
+			if ($exception->getCode() === '23000') {
+				return false;
+			}
+			error_log('Category update failed: ' . $exception->getMessage());
+			return false;
+		}
+	}
+
+	public function deleteCategoryById($categoryId)
+	{
+		if ($categoryId <= 0) {
+			return false;
+		}
+
+		$inUseStmt = $this->conn->prepare(
+			'SELECT COUNT(*)
+			 FROM projects
+			 WHERE category_id = :id
+			   AND deleted_at IS NULL'
+		);
+		$inUseStmt->execute([':id' => (int) $categoryId]);
+		$inUseCount = (int) $inUseStmt->fetchColumn();
+
+		if ($inUseCount > 0) {
+			return false;
+		}
+
+		$stmt = $this->conn->prepare('DELETE FROM categories WHERE id = :id');
+		$stmt->execute([':id' => (int) $categoryId]);
+		return $stmt->rowCount() > 0;
+	}
 }

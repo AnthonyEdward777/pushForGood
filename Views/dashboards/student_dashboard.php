@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard | PushForGood</title>
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/app_theme.css">
-    <link rel="stylesheet" href="/pushforgood/public/stylesheets/student_dashboard.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/app_theme.css">
+    <link rel="stylesheet" href="<?= basePath() ?>/public/stylesheets/student_dashboard.css">
 </head>
 
 <body>
@@ -17,7 +17,7 @@
                 <h1>Welcome, <?= htmlspecialchars($name) ?></h1>
                 <span class="role-badge"><?= htmlspecialchars($role) ?> Access</span>
             </div>
-            <a href="/pushforgood/logout" class="btn-logout">Logout</a>
+            <a href="<?= basePath() ?>/logout" class="btn-logout">Logout</a>
         </div>
 
         <?php if (!empty($flashSuccess)): ?>
@@ -32,7 +32,7 @@
         <p class="section-subtitle">Browse open volunteer opportunities and apply directly.</p>
 
         <div class="filters-box">
-            <form class="filters-form" method="GET" action="/pushforgood/dashboard" data-enhanced-validation="true">
+            <form class="filters-form" method="GET" action="<?= basePath() ?>/dashboard" data-enhanced-validation="true">
                 <div>
                     <label for="type">Project Type</label>
                     <select id="type" name="type">
@@ -63,7 +63,7 @@
 
                 <div class="filters-actions">
                     <button type="submit" class="btn btn-filter">Search</button>
-                    <a href="/pushforgood/dashboard" class="btn btn-clear">Reset</a>
+                    <a href="<?= basePath() ?>/dashboard" class="btn btn-clear">Reset</a>
                 </div>
             </form>
         </div>
@@ -84,14 +84,14 @@
                             <?= nl2br(htmlspecialchars($project['description'] ?? '')) ?>
                         </div>
                         <div class="project-actions">
-                            <a href="/pushforgood/projects/view?id=<?= (int) $project['id'] ?>" class="btn btn-view">View Details</a>
+                            <a href="<?= basePath() ?>/projects/view?id=<?= (int) $project['id'] ?>" class="btn btn-view">View Details</a>
 
                             <?php if (strtolower($project['status'] ?? '') !== 'open'): ?>
                                 <button type="button" class="btn btn-applied" disabled>Closed</button>
                             <?php elseif ($alreadyApplied): ?>
                                 <button type="button" class="btn btn-applied" disabled>Applied</button>
                             <?php else: ?>
-                                <a href="/pushforgood/projects/view?id=<?= (int) $project['id'] ?>" class="btn btn-apply">Apply</a>
+                                <a href="<?= basePath() ?>/projects/view?id=<?= (int) $project['id'] ?>" class="btn btn-apply">Apply</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -115,6 +115,7 @@
                             <th>NGO</th>
                             <th>Applied On</th>
                             <th>Status</th>
+                            <th>Contract</th>
                             <th>Details</th>
                         </tr>
                     </thead>
@@ -134,7 +135,16 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="/pushforgood/projects/view?id=<?= (int) $application['project_id'] ?>" class="btn btn-view">Open</a>
+                                    <?php if ($status === 'accepted' && !empty($application['contract_id'])): ?>
+                                        <a href="<?= basePath() ?>/contracts/download?application_id=<?= (int) $application['id'] ?>" class="btn btn-view">Download PDF</a>
+                                    <?php elseif ($status === 'accepted'): ?>
+                                        <span class="muted">Pending</span>
+                                    <?php else: ?>
+                                        <span class="muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <a href="<?= basePath() ?>/projects/view?id=<?= (int) $application['project_id'] ?>" class="btn btn-view">Open</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -148,7 +158,7 @@
         </div>
     </div>
 
-    <script src="/pushforgood/public/scripts/form_validation.js"></script>
+    <script src="<?= basePath() ?>/public/scripts/form_validation.js"></script>
 
 </body>
 

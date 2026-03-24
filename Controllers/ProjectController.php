@@ -17,15 +17,26 @@ class ProjectController
     public function showCreate()
     {
         if ($_SESSION['userRole'] !== 'NGO') {
-            $this->redirect('/dashboard');
+            $this->redirect(basePath() . '/dashboard');
         }
-        $this->render('projects/create');
+
+        $categories = $this->projectModel->getProjectTypes();
+        $this->render('projects/create', ['categories' => $categories]);
     }
 
     public function create()
     {
+        $categoryId = (int) ($_POST['category_id'] ?? 0);
+
+        if ($categoryId <= 0) {
+            $_SESSION['flash_error'] = 'Please select a valid category.';
+            $this->redirect(basePath() . '/dashboard');
+            return;
+        }
+
         $this->projectModel->createProject(
             $_SESSION['userId'],
+            $categoryId,
             $_POST['title'],
             $_POST['description'],
             $_POST['skills'] ?? '',
@@ -33,7 +44,7 @@ class ProjectController
             $_POST['deadline']
         );
 
-        $this->redirect('/dashboard');
+        $this->redirect(basePath() . '/dashboard');
     }
 
     public function showEdit()
@@ -41,18 +52,22 @@ class ProjectController
         $id = $_GET['id'] ?? null;
 
         if (strtolower($_SESSION['userRole']) !== 'ngo') {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
         $project = $this->projectModel->getProjectByIdAndUser($id, $_SESSION['userId']);
 
         if (!$project) {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
-        $this->render('projects/editProject', ['project' => $project]);
+        $categories = $this->projectModel->getProjectTypes();
+        $this->render('projects/editProject', [
+            'project' => $project,
+            'categories' => $categories,
+        ]);
     }
 
     public function update()
@@ -61,18 +76,25 @@ class ProjectController
         $id = $_GET['id'] ?? null;
 
         if (!$id || strtolower($_SESSION['userRole']) !== 'ngo') {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
         if (empty($_POST['title']) || empty($_POST['description']) || empty($_POST['deadline'])) {
-            $this->redirect('/pushforgood/projects/edit?id=' . $id);
+            $this->redirect(basePath() . '/projects/edit?id=' . $id);
+            return;
+        }
+
+        $categoryId = (int) ($_POST['category_id'] ?? 0);
+        if ($categoryId <= 0) {
+            $this->redirect(basePath() . '/projects/edit?id=' . $id);
             return;
         }
 
         $this->projectModel->updateProject(
             $id,
             $_SESSION['userId'],
+            $categoryId,
             $_POST['title'],
             $_POST['description'],
             $_POST['skills'] ?? '',
@@ -80,7 +102,7 @@ class ProjectController
             $_POST['deadline']
         );
 
-        $this->redirect('/pushforgood/dashboard');
+        $this->redirect(basePath() . '/dashboard');
     }
     
     public function view()
@@ -88,7 +110,7 @@ class ProjectController
         $id = $_GET['id'] ?? null;
 
         if (!$id) {
-            $this->redirect('/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
@@ -104,7 +126,7 @@ class ProjectController
         if ($role === 'ngo') {
             $project = $this->projectModel->getProjectByIdAndUser($id, $_SESSION['userId']);
             if (!$project) {
-                $this->redirect('/dashboard?error=not_found');
+                $this->redirect(basePath() . '/dashboard?error=not_found');
                 return;
             }
 
@@ -117,7 +139,7 @@ class ProjectController
         }
 
         if (!$project) {
-            $this->redirect('/dashboard?error=not_found');
+            $this->redirect(basePath() . '/dashboard?error=not_found');
             return;
         }
 
@@ -146,12 +168,12 @@ class ProjectController
         $id = $_GET['id'] ?? null;
 
         if (!$id || strtolower($_SESSION['userRole']) !== 'ngo') {
-            $this->redirect('/pushforgood/dashboard');
+            $this->redirect(basePath() . '/dashboard');
             return;
         }
 
         $this->projectModel->deleteProject($id, $_SESSION['userId']);
-        $this->redirect('/pushforgood/dashboard');
+        $this->redirect(basePath() . '/dashboard');
     }
 
     public function list()
